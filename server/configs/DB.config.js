@@ -1,3 +1,4 @@
+require("dotenv").config();
 module.exports = {
-  DB: "mongodb://localhost:27017/shopDb",
+  DB: process.env.DB,
 };

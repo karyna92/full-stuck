@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-const clientSchema = new Schema({
+const userSchema = new Schema({
   firstName: {
     type: String,
   },
@@ -17,6 +17,7 @@ const clientSchema = new Schema({
   email: {
     type: String,
     required: true,
+    unique: true,
     validate: {
       validator: (value) =>
         /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/.test(value),
@@ -26,12 +27,23 @@ const clientSchema = new Schema({
     type: String,
     required: true,
   },
-  adress: {
+  address: {
     type: String,
-    required: true,
   },
+  role: {
+    type: String,
+    enum: ["client", "admin"],
+    default: "client",
+  },
+  wishList: [
+    {
+      product: { type: Schema.Types.ObjectId, ref: "Product" },
+      quantity: { type: Number, default: 1 },
+    },
+  ],
+  orders: [{ type: Schema.Types.ObjectId, ref: "Order" }],
 });
 
-const Client = mongoose.model("Client", clientSchema);
+const User = mongoose.model("User", userSchema);
 
-module.exports = Client;
+module.exports = User;
