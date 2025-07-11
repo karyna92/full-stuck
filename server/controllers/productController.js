@@ -1,6 +1,6 @@
-const { Product } = require("./models");
+const { Product } = require("../models");
 
-module.exports.createProduct = async (req, res) => {
+module.exports.createProduct = async (req, res, next) => {
   try {
     const product = await Product(req.body);
     res.status(201).json({ message: "Product created successfully" });
@@ -9,16 +9,26 @@ module.exports.createProduct = async (req, res) => {
   }
 };
 
-module.exports.getAllProducts = async (req, res) => {
+module.exports.getAllProducts = async (req, res, next) => {
   try {
-    const products = await Product.find();
-    res.status(200).json(products);
+    const { limit, skip, page } = req.pagination;
+
+    const products = await Product.find().limit(limit).skip(skip);
+    const total = await Product.countDocuments();
+
+   
+    res.json({
+      data: products,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+      totalItems: total,
+    });
   } catch (error) {
     next(error);
   }
 };
 
-module.exports.getProductById = async (req, res) => {
+module.exports.getProductById = async (req, res, next) => {
   try {
     const id = req.params.id;
     const product = await Product.findById(id);
