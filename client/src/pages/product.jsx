@@ -1,14 +1,12 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams,  } from "react-router-dom";
 import { useEffect, useState } from "react";
+import ProductDetailsCard from "../components/Products/productDetails";
 import { getProductById, addProductToChart } from "../api/productApi";
-// import "./styles.css";
 
-const ProductDetails = (props) => {
+const ProductPage = ({ user, setLoginModal }) => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
-  const navigate = useNavigate();
 
- 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
@@ -21,13 +19,12 @@ const ProductDetails = (props) => {
     fetchProduct();
   }, [id]);
 
-
   const handleAddToCart = async () => {
-    if (!props.user) {
-      navigate("/user"); 
+    if (!user) {
+      setLoginModal(true);
     } else {
       try {
-        await addProductToChart(props.user._id, product._id, 1);
+        await addProductToChart(user._id, product._id, 1);
         console.log("Product added to cart!");
       } catch (error) {
         console.error("Failed to add to cart:", error);
@@ -35,49 +32,19 @@ const ProductDetails = (props) => {
     }
   };
 
-
   const handleBuyNow = () => {
-    if (!props.user) {
-      navigate("/user");
+    if (!user) {
+      setLoginModal(true);
     } else {
       console.log("Thanks for your purchase!");
-    
     }
   };
 
   if (!product) return <p>Loading...</p>;
 
   return (
-    <div className="product-details">
-      <h1>{product.name}</h1>
-
-      {product.image && (
-        <img
-          src={product.image}
-          alt={product.name}
-          className="product-details-image"
-        />
-      )}
-
-      <p>
-        <strong>Price:</strong> ${product.price.toFixed(2)}
-      </p>
-
-      {product.discount > 0 && (
-        <p>
-          <strong>Discount:</strong> {product.discount}%
-        </p>
-      )}
-
-      <p>
-        <strong>Description:</strong> {product.description}
-      </p>
-      <p>
-        <strong>Category:</strong> {product.category}
-      </p>
-      <p>
-        <strong>In Stock:</strong> {product.stock}
-      </p>
+    <div>
+      <ProductDetailsCard product={product} />
 
       {product.reviews?.length > 0 ? (
         <div>
@@ -100,4 +67,4 @@ const ProductDetails = (props) => {
   );
 };
 
-export default ProductDetails;
+export default ProductPage;

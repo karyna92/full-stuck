@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const orderSchema = new Schema({
-  clientId: { 
-    type: Schema.Types.ObjectId, ref: "Client"
+  userId: { 
+    type: Schema.Types.ObjectId, ref: "User"
  },
   products: [
     {

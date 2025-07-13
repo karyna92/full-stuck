@@ -7,7 +7,7 @@ export const loginUser = async (data) => {
       "http://localhost:5000/api/authentication/sign-in",
       data
     );
-   // console.log(response.data.user) 
+   console.log(response.data.user) 
     return response.data;
   } catch (error) {
     console.error(error);

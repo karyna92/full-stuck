@@ -12,9 +12,13 @@ const reviewSchema = new Schema({
     type: String,
     required: true,
   },
-  client: {
+  user: {
     type: Schema.Types.ObjectId,
-    ref: "Client",
+    ref: "User",
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
 });
 const Review= mongoose.model("Review", reviewSchema);

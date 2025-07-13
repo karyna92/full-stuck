@@ -7,6 +7,7 @@ import CartList from "../components/Cart/CartList";
 const UserPage = ({ user }) => {
    const [activeSection, setActiveSection] = useState("");
    console.log(user)
+
   
     return (
       <div>

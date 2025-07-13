@@ -2,14 +2,14 @@ import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./layout.css";
 
-const ShopLayout = ({ children, onLoginClick, user }) => {
+const ShopLayout = ({ children, user, onLoginClick }) => {
   const navigate = useNavigate();
 
   const handleUserClick = () => {
     if (user) {
       navigate("/user");
     } else {
-      onLoginClick();
+      onLoginClick(); 
     }
   };
 
@@ -23,7 +23,7 @@ const ShopLayout = ({ children, onLoginClick, user }) => {
         <nav className="nav-menu">
           <Link to="/">Home</Link>
           <button onClick={handleUserClick} className="nav-button">
-            {user?.firstName|| "UserProfile"}
+            {user?.firstName || "UserProfile"}
           </button>
         </nav>
       </header>
