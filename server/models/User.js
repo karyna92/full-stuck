@@ -39,7 +39,7 @@ const userSchema = new Schema({
     enum: ["client", "admin"],
     default: "client",
   },
-  wishList: [
+  cart: [
     {
       product: { type: Schema.Types.ObjectId, ref: "Product" },
       quantity: { type: Number, default: 1 },

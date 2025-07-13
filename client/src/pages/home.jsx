@@ -9,15 +9,29 @@ const Home = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(0);
 
+  const prevButtonHandler = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  const nextButtonHandler = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
         const data = await getAllProducts(currentPage);
-        if (data) {
+        if (data?.data && data?.currentPage && data?.totalPages) {
           setProducts(data.data);
           setCurrentPage(data.currentPage);
           setTotalPages(data.totalPages);
+        } else {
+          throw new Error("Invalid response format");
         }
       } catch (err) {
         setError(err.message || "Error fetching products");
@@ -33,10 +47,26 @@ const Home = () => {
   if (error) return <p>{error}</p>;
 
   return (
-    <div>
-      <h1>Welcome to Our Shop</h1>
-      <ProductsList products={products} />
-    </div>
+    <>
+      <div>
+        <h1>Welcome to Our Shop</h1>
+        <ProductsList products={products} />
+      </div>
+      <div>
+        <button onClick={prevButtonHandler} disabled={currentPage === 1}>
+          Prev
+        </button>
+
+        <button
+          onClick={nextButtonHandler}
+          disabled={currentPage === totalPages}
+        >
+          {currentPage < totalPages
+            ? `Next (${totalPages - currentPage})`
+            : "Next"}
+        </button>
+      </div>
+    </>
   );
 };
 

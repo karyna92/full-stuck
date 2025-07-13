@@ -20,9 +20,9 @@ const productSchema = new Schema({
     stock: { 
         type: Number, required: true 
     },
-    discount : {
-         type: Number
-         },
+    discount: {
+         type: Number, default: 0 
+        },
     reviews : [{ 
         type: Schema.Types.ObjectId, ref: 'Review' 
     }]

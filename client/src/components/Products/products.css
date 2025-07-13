@@ -62,3 +62,7 @@
     color: #111;
   }
   
+  .product-card-link {
+    text-decoration: none;
+    color: inherit;
+  }

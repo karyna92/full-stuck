@@ -4,6 +4,7 @@ import Home from "./pages/home";
 import UserPage from "./pages/userPage";
 import ShopLayout from "./components/Layout";
 import LoginModal from "./components/Login/LoginModal";
+import ProductDetails from "./pages/product";
 import "./App.css";
 
 function App() {
@@ -15,6 +16,7 @@ function App() {
       <ShopLayout onLoginClick={() => setLoginModal(true)} user={user}>
         <Routes>
           <Route path="/" element={<Home user={user} setUser={setUser} />} />
+          <Route path="/products/:id" element={<ProductDetails />} />
           <Route path="/user" element={<UserPage user={user} />} />
         </Routes>
 

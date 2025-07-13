@@ -24,5 +24,7 @@ export const registerUser = async (data) => {
     console.error(error);
   }
 };
+
+
   
 

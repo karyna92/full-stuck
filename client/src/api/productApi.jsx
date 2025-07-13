@@ -13,3 +13,22 @@ export const getAllProducts = async(page=1)=>{
        console.error(error);
      }
 }
+
+export const getProductById = async(id)=>{ 
+  try {
+    const response = await axios.get(`http://localhost:5000/api/products/${id}`); 
+    return response.data;
+    } catch (error) {
+      console.error(error);
+      }
+}
+
+export const addProductToChart = async (userId, productId) => {
+  try {
+    const response = await axios.post(`http://localhost:5000/api/users/${userId}/cart
+      `, { productId });
+      return response.data;
+      } catch (error) {
+        console.error(error);
+      }
+};

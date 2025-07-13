@@ -1,15 +1,11 @@
-// const Router = require("express");
-// const userController = require("../controllers/userController");
+const Router = require("express");
+const userController = require("../controllers/userController");
 
 
-// const UserRouter = Router();
+const UserRouter = Router();
 
-// UserRouter.route("/sing-up").post(userController.registrationUser);
-
-// //   ClientRouter.route("/:id")
-// //   .get(clientController.getOne)
-// //   .put(clientController.update)
-// //   .delete(clientController.delete);
+UserRouter.route("/:userId/cart").put(userController.updateCart);
 
 
-// module.exports = UserRouter; 
+
+module.exports = UserRouter; 
