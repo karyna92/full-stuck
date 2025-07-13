@@ -23,8 +23,9 @@ module.exports.registrationUser = async (req, res, next) => {
 
 module.exports.loginUser = async (req, res, next) => {
   try {
-    const { body } = req;
-    const user = await User.findOne({ email: body.email });
+    const { email, password } = req.body;
+
+    const user = await User.findOne({ email });
     if (!user) {
       return res.status(404).send({ message: "User not found" });
     }

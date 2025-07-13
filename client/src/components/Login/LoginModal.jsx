@@ -8,7 +8,7 @@ import styles from "./login.module.css";
 Modal.setAppElement("#root");
 
 const LoginModal = (props) => {
-  const [loginState, setLoginState] = useState(false); // false = SignIn, true = SignUp
+  const [loginState, setLoginState] = useState(false);  
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
@@ -22,6 +22,7 @@ const LoginModal = (props) => {
       const result = await submitFn(values);
       
       console.log(result.data)
+      
       props.sendUser(result.data);
       navigate("/user");
     } catch (err) {

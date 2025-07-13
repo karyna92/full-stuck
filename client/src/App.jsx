@@ -11,6 +11,7 @@ function App() {
   const [user, setUser] = useState(null);
   const [loginModal, setLoginModal] = useState(false);
 
+
   return (
     <BrowserRouter>
       <ShopLayout onLoginClick={() => setLoginModal(true)} user={user}>
@@ -30,6 +31,7 @@ function App() {
         />
       </ShopLayout>
     </BrowserRouter>
+
   );
 }
 

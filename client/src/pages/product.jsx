@@ -1,7 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { getProductById, addProductToChart } from "../api/productApi";
-import "./styles.css";
+// import "./styles.css";
 
 const ProductDetails = (props) => {
   const { id } = useParams();
