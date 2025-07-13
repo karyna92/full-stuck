@@ -19,6 +19,7 @@ const SignUp = (props) => {
       values,
     });
     actions.resetForm();
+    props.onClose()
   };
 
   return (

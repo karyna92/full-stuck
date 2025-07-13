@@ -11,7 +11,11 @@ const userSchema = new Schema({
   birthday: {
     type: Date,
     validate: {
-      validator: (value) => value < new Date(),
+      validator: function (value) {
+        if (!value) return true;
+        return value instanceof Date && value < new Date();
+      },
+      message: "Birthday must be a valid date in the past",
     },
   },
   email: {

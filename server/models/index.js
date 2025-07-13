@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const { DB } = require("../configs/DB.config");
-const Client = require("./User");
+const User = require("./User");
 const Order = require("./Order");
 const Product = require("./Product");
 const Review = require("./Review");
@@ -13,7 +13,7 @@ async function start() {
 start();
 
 module.exports = {
-  Client,
+  User,
   Order,
   Product,
   Review,

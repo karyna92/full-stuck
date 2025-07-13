@@ -6,11 +6,13 @@ const ProductCard = ({ product }) => {
     <div className="product-card">
       <h3>{product.name}</h3>
       {product.image && (
-        <img
-          src={product.image}
-          alt={product.name}
-          className="product-image"
-        />
+        <div className="image-container">
+          <img
+            src={product.image}
+            alt={product.name}
+            className="product-image"
+          />
+        </div>
       )}
       <p>{product.description}</p>
       <p>

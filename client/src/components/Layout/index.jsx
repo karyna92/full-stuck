@@ -1,8 +1,18 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./layout.css";
 
-const ShopLayout = ({ children }) => {
+const ShopLayout = ({ children, onLoginClick, user }) => {
+  const navigate = useNavigate();
+
+  const handleUserClick = () => {
+    if (user) {
+      navigate("/user");
+    } else {
+      onLoginClick();
+    }
+  };
+
   return (
     <div className="layout-container">
       <header className="header">
@@ -12,7 +22,9 @@ const ShopLayout = ({ children }) => {
         </div>
         <nav className="nav-menu">
           <Link to="/">Home</Link>
-          <Link to="/user">UserProfile</Link>
+          <button onClick={handleUserClick} className="nav-button">
+            {user?.firstName|| "UserProfile"}
+          </button>
         </nav>
       </header>
 

@@ -8,19 +8,22 @@ import styles from "./login.module.css";
 Modal.setAppElement("#root");
 
 const LoginModal = (props) => {
-  const [loginState, setLoginState] = useState(false);
+  const [loginState, setLoginState] = useState(false); // false = SignIn, true = SignUp
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   const buttonHandler = () => {
     setLoginState((prev) => !prev);
+    setError(null); 
   };
 
   const getData = async ({ submitFn, values }) => {
     try {
       const result = await submitFn(values);
+      
+      console.log(result.data)
       props.sendUser(result.data);
-      navigate("/userProfile");
+      navigate("/user");
     } catch (err) {
       setError(err);
     }
@@ -34,16 +37,20 @@ const LoginModal = (props) => {
     >
       <div className={styles.container}>
         <header className={styles.header}>
+          <button onClick={props.onClose} className={styles.closeButton}>
+            ×
+          </button>
+
           <button onClick={buttonHandler} className={styles.toggleButton}>
-            {loginState ? "SignIn" : "SignUp"}
+            {loginState ? "Switch to Sign In" : "Switch to Sign Up"}
           </button>
         </header>
 
         <main className={styles["form-wrapper"]}>
           {loginState ? (
-            <SignUp sendData={getData} />
+            <SignUp sendData={getData} onClose={props.onClose} />
           ) : (
-            <SignIn sendData={getData} />
+            <SignIn sendData={getData} onClose={props.onClose} />
           )}
           {error && (
             <div className={styles["error-container"]}>{error.err}</div>
