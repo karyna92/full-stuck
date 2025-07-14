@@ -30,7 +30,11 @@ const ProductDetailsCard = ({product}) => {
         <strong>Category:</strong> {product.category}
       </p>
       <p>
-        <strong>In Stock:</strong> {product.stock}
+        {product.stock >= 1 ? (
+          <strong>In stock </strong>
+        ) : (
+          <strong>Out of stock</strong>
+        )}
       </p>
     </div>
   );

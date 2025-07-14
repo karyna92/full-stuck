@@ -1,11 +1,15 @@
-import { useParams,  } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import ProductDetailsCard from "../components/Products/productDetails";
-import { getProductById, addProductToChart } from "../api/productApi";
+import ReviewsList from "../components/Reviews/ReviewsList";
+import AddToCartModal from "../components/Cart/AddToCartModal";
+import { getProductById } from "../api/productApi";
+import { addItemtToCart } from "../api/userApi";
 
 const ProductPage = ({ user, setLoginModal }) => {
   const { id } = useParams();
   const [product, setProduct] = useState(null);
+  const [addToCartModal, setAddToCartModal] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -19,16 +23,11 @@ const ProductPage = ({ user, setLoginModal }) => {
     fetchProduct();
   }, [id]);
 
-  const handleAddToCart = async () => {
+  const handleAddToCart = () => {
     if (!user) {
       setLoginModal(true);
     } else {
-      try {
-        await addProductToChart(user._id, product._id, 1);
-        console.log("Product added to cart!");
-      } catch (error) {
-        console.error("Failed to add to cart:", error);
-      }
+      setAddToCartModal(true);
     }
   };
 
@@ -40,29 +39,34 @@ const ProductPage = ({ user, setLoginModal }) => {
     }
   };
 
+  const handleAddToCartSubmit = async (quantity) => {
+    try {
+      await addItemtToCart(user._id, product._id, quantity);
+      setAddToCartModal(false);
+    } catch (error) {
+      console.error("Failed to add to cart:", error);
+    }
+  };
+  
+
   if (!product) return <p>Loading...</p>;
 
   return (
     <div>
       <ProductDetailsCard product={product} />
-
-      {product.reviews?.length > 0 ? (
-        <div>
-          <h3>Reviews:</h3>
-          <ul>
-            {product.reviews.map((reviewId) => (
-              <li key={reviewId}>{reviewId}</li>
-            ))}
-          </ul>
-        </div>
-      ) : (
-        <p>No reviews yet.</p>
-      )}
-
+      <ReviewsList reviews={product.reviews} />
       <div>
         <button onClick={handleAddToCart}>Add to Cart</button>
         <button onClick={handleBuyNow}>Buy Now</button>
       </div>
+      {addToCartModal && (
+        <AddToCartModal
+          isOpen={addToCartModal}
+          onClose={() => setAddToCartModal(false)}
+          product={product}
+          onSubmit={handleAddToCartSubmit}
+        />
+      )}
     </div>
   );
 };

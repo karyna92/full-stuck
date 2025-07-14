@@ -23,12 +23,4 @@ export const getProductById = async(id)=>{
       }
 }
 
-export const addProductToChart = async (userId, productId) => {
-  try {
-    const response = await axios.post(`http://localhost:5000/api/users/${userId}/cart
-      `, { productId });
-      return response.data;
-      } catch (error) {
-        console.error(error);
-      }
-};
+

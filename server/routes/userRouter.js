@@ -4,7 +4,9 @@ const userController = require("../controllers/userController");
 
 const UserRouter = Router();
 
-UserRouter.route("/:userId/cart").put(userController.updateCart);
+UserRouter.route("/:userId/cart")
+  .post(userController.updateCart)
+  .delete(userController.deleteItemFromCart);
 
 
 

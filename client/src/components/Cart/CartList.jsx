@@ -1,23 +1,38 @@
 import CartItem from "./CartItem";
+import { deleteItemFromCart, addItemtToCart } from "../../api/userApi";
 
-const CartList = ({ cart, onRemove, onUpdateQuantity }) => {
-  if (!cart || cart.length === 0) {
+
+const CartList = (user) => {
+  if (!user.cart || user.cart.length === 0) {
     return <p>Your cart is empty.</p>;
   }
 
+  const onUpdateItem= (userId, productId) => { 
+    addItemtToCart(userId, productId);
+
+  };
+
+const onRemoveItem = (userId, productId) => { 
+   deleteItemFromCart(userId, productId)
+  return <p>Item removed from cart</p>
+
+}
+  const total = user.cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
   return (
     <div className="cart-list">
       <h2>Your Cart</h2>
       <ul>
-        {cart.map((item) => (
+        {user.cart.map((item) => (
           <CartItem
             key={item.product._id}
             item={item}
-            onRemove={onRemove}
-            onUpdateQuantity={onUpdateQuantity}
+            onRemove={onRemoveItem}
+            onUpdate={onUpdateItem}
           />
         ))}
       </ul>
+
+      <p>your total: {total}</p>
     </div>
   );
 };

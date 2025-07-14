@@ -1,6 +1,5 @@
 import Modal from "react-modal";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
 import styles from "./login.module.css";
@@ -10,7 +9,7 @@ Modal.setAppElement("#root");
 const LoginModal = ({ isOpen, onClose, sendUser }) => {
   const [loginState, setLoginState] = useState(false); 
   const [error, setError] = useState(null);
-  const navigate = useNavigate();
+ 
 
   const toggleForm = () => {
     setLoginState((prev) => !prev);
@@ -22,7 +21,7 @@ const LoginModal = ({ isOpen, onClose, sendUser }) => {
       const result = await submitFn(values);
       console.log(result);
       sendUser(result); 
-      navigate("/user");
+    onClose()
     } catch (err) {
       setError(err);
     }
