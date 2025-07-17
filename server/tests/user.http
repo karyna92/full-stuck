@@ -2,10 +2,30 @@ POST http://localhost:5000/api/authentication/sign-up HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "john.doe@gmail.com",
+  "email": "lily.dep@gmail.com",
   "password": "qwerty123",
-  "firstName": "John",
-  "lastName": "Doe",
+  "firstName": "Lily",
+  "lastName": "Dep",
   "birthday": "1990-01-01"
 
+}
+###
+POST http://localhost:5000/api/authentication/sign-in HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "lily.dep@gmail.com",
+  "password": "qwerty123"
+}
+
+####
+GET http://localhost:5000/api/authentication HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODc5MGM4ZmFhZTM3MjMxNDM4NjcwMGIiLCJlbWFpbCI6ImxpbHkuZGVwQGdtYWlsLmNvbSIsImlhdCI6MTc1Mjc2MzkzMCwiZXhwIjoxNzUyNzYzOTkwfQ.NNkJZIEODDgWK8f2qaCIz5w4ytvsKILWrS17URCS51I
+
+###
+POST http://localhost:5000/api/authentication/refresh HTTP/1.1
+Content-Type: application/json
+
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NjZiMWVmMzA3ZmEyMjY2M2M0MDIwYWUiLCJlbWFpbCI6ImphbmUuZG9lQGdtYWlsLmNvbSIsImlhdCI6MTcxODkwNDkxNSwiZXhwIjoxNzE4OTA0OTc1fQ.gMBwFSkIATD9stKw-HvNYfjs7WghJ0vat_MJHvbaIZw"
 }

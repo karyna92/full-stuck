@@ -53,7 +53,7 @@ const UserPage = ({ user }) => {
             <div>
               <h2>Your Cart</h2>
               <p>Show cart contents here...</p>
-              <CartList cart={user.cart} />
+              <CartList user={user} />
             </div>
           )}
         </section>

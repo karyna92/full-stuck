@@ -1,4 +1,4 @@
-const Router = require("express");
+const {Router} = require("express");
 const authRouter = require("./authRouter");
 const productRouter = require("./productRouter");
 const userRouter = require("./userRouter");

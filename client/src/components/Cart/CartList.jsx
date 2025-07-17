@@ -2,7 +2,8 @@ import CartItem from "./CartItem";
 import { deleteItemFromCart, addItemtToCart } from "../../api/userApi";
 
 
-const CartList = (user) => {
+const CartList = ({user}) => {
+  console.log(user)
   if (!user.cart || user.cart.length === 0) {
     return <p>Your cart is empty.</p>;
   }

@@ -43,6 +43,7 @@ const ProductPage = ({ user, setLoginModal }) => {
     try {
       await addItemtToCart(user._id, product._id, quantity);
       setAddToCartModal(false);
+      alert("item was succesfuly added to cart");
     } catch (error) {
       console.error("Failed to add to cart:", error);
     }

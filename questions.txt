@@ -4,8 +4,9 @@
 4. як реалізувати пошук товарів
 5. як реалізувати знизу колонк схожі товари
 6. як реалізувати контроль стоку товарів
-
-
+7.race conditions,
+8.запитати прo BrowserRouter versions
+9.cookies/ local storage/ session storage/ usage 
 
 
  додаткові замовлення

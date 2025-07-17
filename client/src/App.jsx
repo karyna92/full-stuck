@@ -1,18 +1,40 @@
-import { useState } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState, useEffect } from "react";
+import {
+  Routes,
+  Route,
+  unstable_HistoryRouter as HistoryRouter,
+} from "react-router-dom";
 import Home from "./pages/home";
 import UserPage from "./pages/userPage";
 import ShopLayout from "./components/Layout";
 import LoginModal from "./components/Login/LoginModal";
 import ProductPage from "./pages/product";
+import history from "./BrowserHistory";
+import { authUser } from "./api/userApi";
 import "./App.css";
 
 function App() {
   const [user, setUser] = useState(null);
   const [loginModal, setLoginModal] = useState(false);
 
+useEffect(() => {
+  async function fetchUser() {
+    try {
+      const UserData = await authUser();
+      console.log(UserData)
+      setUser(UserData);
+    } catch (error) {
+     return history.push("/");
+    }
+  }
+
+  if (!user) {
+    fetchUser();
+  }
+}, [user]);
+
   return (
-    <BrowserRouter>
+    <HistoryRouter history={history}>
       <ShopLayout user={user} onLoginClick={() => setLoginModal(true)}>
         <Routes>
           <Route path="/" element={<Home user={user} setUser={setUser} />} />
@@ -28,14 +50,13 @@ function App() {
             isOpen={loginModal}
             onClose={() => setLoginModal(false)}
             sendUser={(userData) => {
-              console.log("Received user in App:", userData);
-              setUser(userData.user);
+              setUser(userData);
               setLoginModal(false);
             }}
           />
         )}
       </ShopLayout>
-    </BrowserRouter>
+    </HistoryRouter>
   );
 }
 

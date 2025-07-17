@@ -4,6 +4,7 @@ const User = require("./User");
 const Order = require("./Order");
 const Product = require("./Product");
 const Review = require("./Review");
+const RefreshToken = require("./RefreshToken")
 
 async function start() {
   await mongoose.connect(DB).catch((err) => {
@@ -17,4 +18,5 @@ module.exports = {
   Order,
   Product,
   Review,
+  RefreshToken,
 };
