@@ -11,27 +11,30 @@ import LoginModal from "./components/Login/LoginModal";
 import ProductPage from "./pages/product";
 import history from "./BrowserHistory";
 import { authUser } from "./api/userApi";
+import UpdateProfile from "./components/User/UpdateProfile";
 import "./App.css";
 
 function App() {
   const [user, setUser] = useState(null);
   const [loginModal, setLoginModal] = useState(false);
+  const [loading, setLoading] = useState(false);
 
 useEffect(() => {
   async function fetchUser() {
     try {
+      setLoading(true);
       const UserData = await authUser();
-      console.log(UserData)
       setUser(UserData);
     } catch (error) {
      return history.push("/");
+    }  finally {
+      setLoading(false);
     }
   }
-
-  if (!user) {
     fetchUser();
-  }
-}, [user]);
+}, []);
+
+if (loading) return <div>Loading user...</div>;
 
   return (
     <HistoryRouter history={history}>
@@ -40,9 +43,10 @@ useEffect(() => {
           <Route path="/" element={<Home user={user} setUser={setUser} />} />
           <Route
             path="/products/:id"
-            element={<ProductPage user={user} setLoginModal ={setLoginModal} />}
+            element={<ProductPage user={user} setLoginModal={setLoginModal} />}
           />
           <Route path="/user" element={<UserPage user={user} />} />
+          <Route path="/avatar/:userId" element={<UpdateProfile />} />
         </Routes>
 
         {loginModal && (

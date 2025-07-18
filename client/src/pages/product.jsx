@@ -4,7 +4,7 @@ import ProductDetailsCard from "../components/Products/productDetails";
 import ReviewsList from "../components/Reviews/ReviewsList";
 import AddToCartModal from "../components/Cart/AddToCartModal";
 import { getProductById } from "../api/productApi";
-import { addItemtToCart } from "../api/userApi";
+import { addItemToCart } from "../api/userApi";
 
 const ProductPage = ({ user, setLoginModal }) => {
   const { id } = useParams();
@@ -41,7 +41,7 @@ const ProductPage = ({ user, setLoginModal }) => {
 
   const handleAddToCartSubmit = async (quantity) => {
     try {
-      await addItemtToCart(user._id, product._id, quantity);
+      await addItemToCart(user._id, product._id, quantity);
       setAddToCartModal(false);
       alert("item was succesfuly added to cart");
     } catch (error) {

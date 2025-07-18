@@ -1,34 +1,39 @@
 import CartItem from "./CartItem";
-import { deleteItemFromCart, addItemtToCart } from "../../api/userApi";
+import { deleteItemFromCart, addItemToCart } from "../../api/userApi";
 
 
 const CartList = ({user}) => {
   console.log(user)
   if (!user.cart || user.cart.length === 0) {
-    return <p>Your cart is empty.</p>;
+    return null
   }
 
-  const onUpdateItem= (userId, productId) => { 
-    addItemtToCart(userId, productId);
+ const onUpdateItem = async (productId, newQuantity) => {
+   await addItemToCart(user._id, productId, newQuantity);
+   window.location.reload(); 
+ };
 
-  };
+const onRemoveItem = async (productId) => {
+  await deleteItemFromCart(user._id, productId);
+  window.location.reload();
+};
 
-const onRemoveItem = (userId, productId) => { 
-   deleteItemFromCart(userId, productId)
-  return <p>Item removed from cart</p>
+ const total = user.cart.reduce((acc, item) => {
+   if (!item.product) return acc; 
+   return acc + item.product.price * item.quantity;
+ }, 0);
 
-}
-  const total = user.cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
   return (
     <div className="cart-list">
       <h2>Your Cart</h2>
       <ul>
         {user.cart.map((item) => (
           <CartItem
-            key={item.product._id}
+            key={item._id}
             item={item}
+            user ={user}
             onRemove={onRemoveItem}
-            onUpdate={onUpdateItem}
+            onUpdateQuantity={onUpdateItem}
           />
         ))}
       </ul>

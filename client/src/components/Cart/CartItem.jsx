@@ -1,8 +1,14 @@
 import React from "react";
 import "./styles.css"; 
 
-const CartListItem = ({ item, onRemove, onUpdateQuantity }) => {
+const CartListItem = ({ user, item, onRemove, onUpdateQuantity }) => {
+  console.log(item)
   const { product, quantity } = item;
+
+
+  if (!product) {
+    return <li>Product not found or deleted</li>;
+  }
 
   return (
     <li className="cart-list-item">
@@ -23,11 +29,11 @@ const CartListItem = ({ item, onRemove, onUpdateQuantity }) => {
       <div className="item-actions">
         {onUpdateQuantity && (
           <div className="quantity-controls">
-            <button onClick={() => onUpdateQuantity(product._id, quantity + 1)}>
+            <button onClick={() => onUpdateQuantity(user._id, product._id, quantity + 1)}>
               +
             </button>
             <button
-              onClick={() => onUpdateQuantity(product._id, quantity - 1)}
+              onClick={() => onUpdateQuantity(user._id, product._id, quantity - 1)}
               disabled={quantity <= 1}
             >
               -
@@ -38,7 +44,7 @@ const CartListItem = ({ item, onRemove, onUpdateQuantity }) => {
         {onRemove && (
           <button
             className="remove-button"
-            onClick={() => onRemove(product._id)}
+            onClick={() => onRemove(product._id, user._id)}
           >
             Remove
           </button>

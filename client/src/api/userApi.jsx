@@ -48,8 +48,7 @@ export const authUser = async () => {
           },
         }
       );
-      console.log(response.data.user);
-      return response.data.user;
+      return response.data.data
 
     } catch (error) {
       if (error.response && error.response.status === 403) {
@@ -87,7 +86,7 @@ export async function refreshSession() {
   }
 }
 
-export const addItemtToCart = async (userId, productId, quantity) => {
+export const addItemToCart = async (userId, productId, quantity) => {
   try {
     const response = await axios.post(
       `http://localhost:5000/api/users/${userId}/cart`,
@@ -103,11 +102,15 @@ export const addItemtToCart = async (userId, productId, quantity) => {
   }
 };
 
-export const deleteItemFromCart = async (id) => {
+export const deleteItemFromCart = async (userId, productId) => {
   try {
     const response = await axios.delete(
-      `http://localhost:5000/api/users/cart/${id}`
+      `http://localhost:5000/api/users/${userId}/cart`,
+      {
+        data: { userId, productId },
+      }
     );
+    console.log({'just updated user': response.data})
     return response.data;
   } catch (error) {
     console.error(error);

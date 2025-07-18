@@ -28,7 +28,7 @@ module.exports.loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
-    const user = await User.findOne({ email }).populate("cart._id");
+    const user = await User.findOne({ email }).populate("cart.product");
     if (!user) {
       throw new NotFoundError('User not found');
     }
@@ -58,12 +58,11 @@ module.exports.checkAuth = async (req, res, next) => {
       tokenPayload: { userId },
     } = req;
 
-    const foundUser = await User.findById(userId).populate("cart._id");
+    const foundUser = await User.findById(userId).populate("cart.product");
 
     if (!foundUser) {
       throw new NotFoundError('User not found');
     }
-console.log({ data: foundUser });
     res.status(200).send({ data: foundUser });
 
   } catch (error) {

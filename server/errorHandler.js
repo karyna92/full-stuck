@@ -4,7 +4,10 @@ const {
 const { JsonWebTokenError, TokenExpiredError } = require("jsonwebtoken");
 const { CustomError } = require("./errors");
 
+
 module.exports.errorHandler = async (err, req, res, next) => {
+  console.log(err)
+  
   if (err instanceof ValidationError) {
     return res.status(400).send({ error: err.message });
   }
