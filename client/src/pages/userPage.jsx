@@ -1,19 +1,15 @@
-import React, { useState} from "react";
-import { useNavigate } from "react-router-dom";
-import UserProfile from '../components/User/userProfile';
-import PersonalInfo from '../components/User/personalInfo';
-import CartList from "../components/Cart/CartList"; 
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import UserProfile from "../components/User/userProfile";
+import PersonalInfo from "../components/User/personalInfo";
+import CartList from "../components/Cart/CartList";
+import OrdersList from "../components/Orders/OrdersList";
 
 // import "./styles.css";
 
 const UserPage = ({ user }) => {
   const [activeSection, setActiveSection] = useState("");
   console.log(user);
-
-     const navigate = useNavigate();
-  const handleSetAvatarClick = () => {
-    navigate(`/avatar/${user._id}`);
-  };
 
   return (
     <div>
@@ -41,7 +37,9 @@ const UserPage = ({ user }) => {
           <div>
             <h2>Account Settings</h2>
             <p>Here you can update your profile, password, etc.</p>
-            <button onClick={handleSetAvatarClick}> Update profile  </button>
+            <Link to={`/${user._id}/update`}>
+              <button>Update Profile</button>
+            </Link>
           </div>
         )}
 
@@ -49,6 +47,7 @@ const UserPage = ({ user }) => {
           <div>
             <h2>Your Orders</h2>
             <p>Show list of orders here...</p>
+            <OrdersList user={user} />
           </div>
         )}
 
@@ -60,6 +59,11 @@ const UserPage = ({ user }) => {
           </div>
         )}
       </section>
+      <div>
+        <Link to="/" className="back-button">
+          Go shopping
+        </Link>
+      </div>
     </div>
   );
 };

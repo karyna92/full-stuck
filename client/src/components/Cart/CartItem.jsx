@@ -2,16 +2,14 @@ import React from "react";
 import "./styles.css"; 
 
 const CartListItem = ({ user, item, onRemove, onUpdateQuantity }) => {
-  console.log(item)
   const { product, quantity } = item;
 
-
   if (!product) {
-    return <li>Product not found or deleted</li>;
+    return <div>Product not found or deleted</div>;
   }
 
   return (
-    <li className="cart-list-item">
+    <div className="cart-list-item">
       <div className="item-details">
         <h4>{product.name}</h4>
         {product.image && (
@@ -29,11 +27,17 @@ const CartListItem = ({ user, item, onRemove, onUpdateQuantity }) => {
       <div className="item-actions">
         {onUpdateQuantity && (
           <div className="quantity-controls">
-            <button onClick={() => onUpdateQuantity(user._id, product._id, quantity + 1)}>
+            <button
+              onClick={() =>
+                onUpdateQuantity(user._id, product._id, quantity + 1)
+              }
+            >
               +
             </button>
             <button
-              onClick={() => onUpdateQuantity(user._id, product._id, quantity - 1)}
+              onClick={() =>
+                onUpdateQuantity(user._id, product._id, quantity - 1)
+              }
               disabled={quantity <= 1}
             >
               -
@@ -50,7 +54,7 @@ const CartListItem = ({ user, item, onRemove, onUpdateQuantity }) => {
           </button>
         )}
       </div>
-    </li>
+    </div>
   );
 };
 

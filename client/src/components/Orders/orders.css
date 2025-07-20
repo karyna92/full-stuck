@@ -1,0 +1,32 @@
+.order-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 16px;
+  background-color: #f9f9f9;
+  transition: box-shadow 0.2s ease;
+}
+
+.order-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.order-card h3 {
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.order-card p {
+  margin: 4px 0;
+  color: #555;
+}
+
+.order-card ul {
+  list-style: disc inside;
+  padding-left: 0;
+}
+
+.order-card li {
+  color: #444;
+  font-size: 0.95rem;
+}

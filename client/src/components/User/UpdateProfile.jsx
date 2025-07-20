@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import { updateUserProfile } from "../../api/userApi";
 import "./userStyles.css";
 
-const UpdateProfile = () => {
+const UpdateProfile = ({ user }) => {
   const { userId } = useParams();
-
-  const [userData, setUserData] = useState({
+  const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
@@ -14,42 +13,33 @@ const UpdateProfile = () => {
     address: "",
   });
 
-  const [selectedFile, setSelectedFile] = useState(null);
+  const [avatarFile, setAvatarFile] = useState(null);
   const [preview, setPreview] = useState(null);
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await axios.get(
-          `http://localhost:5000/api/users/${userId}`
-        );
-        setUserData({
-          firstName: res.data.firstName || "",
-          lastName: res.data.lastName || "",
-          email: res.data.email || "",
-          birthday: res.data.birthday ? res.data.birthday.slice(0, 10) : "",
-          address: res.data.address || "",
-        });
+    if (user) {
+      setFormData({
+        firstName: user.firstName || "",
+        lastName: user.lastName || "",
+        email: user.email || "",
+        birthday: user.birthday ? user.birthday.slice(0, 10) : "",
+        address: user.address || "",
+      });
+      setPreview(
+        user.avatar ? `http://localhost:5000/api/uploads/${user.avatar}` : null
+      );
+    }
+  }, [user]);
 
-        if (res.data.avatar) {
-          setPreview(`http://localhost:5000/api/uploads/${res.data.avatar}`);
-        }
-      } catch (error) {
-        console.error("Failed to fetch user data:", error);
-      }
-    };
-
-    fetchUser();
-  }, [userId]);
-
-  const handleChange = (e) => {
-    setUserData({ ...userData, [e.target.name]: e.target.value });
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFileChange = (e) => {
+  const handleAvatarChange = (e) => {
     const file = e.target.files[0];
-    setSelectedFile(file);
+    setAvatarFile(file);
     if (file) {
       setPreview(URL.createObjectURL(file));
     }
@@ -57,84 +47,82 @@ const UpdateProfile = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const data = new FormData();
 
-    const formData = new FormData();
-    Object.keys(userData).forEach((key) => {
-      formData.append(key, userData[key]);
+    Object.entries(formData).forEach(([key, value]) => {
+      data.append(key, value);
     });
 
-    if (selectedFile) {
-      formData.append("avatar", selectedFile);
+    if (avatarFile) {
+      data.append("avatar", avatarFile);
     }
 
     try {
-      await axios.put(`http://localhost:5000/api/users/${userId}`, formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-
+      await updateUserProfile(userId, data);
       setMessage("Profile updated successfully!");
     } catch (error) {
-      setMessage("Error updating profile.");
       console.error(error);
+      setMessage("Failed to update profile.");
     }
   };
 
   return (
-    <div className="profile-container">
+    <div className="profile-form">
       <h2>Update Your Profile</h2>
 
       {preview && (
         <img src={preview} alt="Avatar Preview" className="avatar-preview" />
       )}
 
-      <form onSubmit={handleSubmit} className="profile-form">
+      <form onSubmit={handleSubmit}>
+        <input type="file" accept="image/*" onChange={handleAvatarChange} />
+
         <input
           type="text"
           name="firstName"
-          value={userData.firstName}
-          onChange={handleChange}
+          value={formData.firstName}
           placeholder="First Name"
+          onChange={handleInputChange}
         />
 
         <input
           type="text"
           name="lastName"
-          value={userData.lastName}
-          onChange={handleChange}
+          value={formData.lastName}
           placeholder="Last Name"
+          onChange={handleInputChange}
         />
 
         <input
           type="email"
           name="email"
-          value={userData.email}
-          onChange={handleChange}
+          value={formData.email}
           placeholder="Email"
+          onChange={handleInputChange}
         />
 
         <input
           type="date"
           name="birthday"
-          value={userData.birthday}
-          onChange={handleChange}
+          value={formData.birthday}
+          onChange={handleInputChange}
         />
 
         <input
           type="text"
           name="address"
-          value={userData.address}
-          onChange={handleChange}
+          value={formData.address}
           placeholder="Address"
+          onChange={handleInputChange}
         />
-
-        <input type="file" accept="image/*" onChange={handleFileChange} />
 
         <button type="submit">Save Changes</button>
       </form>
 
-      {message && <p className="message">{message}</p>}
+      {message && <p>{message}</p>}
     </div>
   );
 };
 
 export default UpdateProfile;
+

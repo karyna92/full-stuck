@@ -1,5 +1,6 @@
 import axios from "axios";
-import history from "../BrowserHistory"
+
+
 
 export const loginUser = async (data) => {
   try {
@@ -35,7 +36,7 @@ export const registerUser = async (data) => {
   }
 };
 
-export const authUser = async () => {
+export const authUser = async (navigate) => {
   const accessToken = localStorage.getItem("accessToken");
 
   if (accessToken) {
@@ -43,48 +44,44 @@ export const authUser = async () => {
       const response = await axios.get(
         "http://localhost:5000/api/authentication",
         {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
+          headers: { Authorization: `Bearer ${accessToken}` },
         }
       );
-      return response.data.data
-
+      return response.data.data;
     } catch (error) {
       if (error.response && error.response.status === 403) {
-        await refreshSession();
-        return authUser();
+        await refreshSession(navigate);
+        return authUser(navigate);
       } else {
         throw error;
       }
     }
   } else {
-    history.push("/");
-    return;
+    navigate('/');
+    return null;
   }
 };
 
-export async function refreshSession() {
-  const refreshToken = localStorage.getItem("refreshToken");
 
+export async function refreshSession(navigate) {
+  const refreshToken = localStorage.getItem("refreshToken");
   try {
     const response = await axios.post(
       `http://localhost:5000/api/authentication/refresh`,
       { refreshToken }
     );
-
     const { tokens } = response.data;
-
     localStorage.setItem("refreshToken", tokens.refreshToken);
     localStorage.setItem("accessToken", tokens.accessToken);
   } catch (error) {
     if (error.response && error.response.status === 401) {
-      history.push("/");
+      navigate("/");
       return;
     }
     throw error;
   }
 }
+
 
 export const addItemToCart = async (userId, productId, quantity) => {
   try {
@@ -111,6 +108,33 @@ export const deleteItemFromCart = async (userId, productId) => {
       }
     );
     console.log({'just updated user': response.data})
+    return response.data;
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+
+export const updateUserProfile = async (userId, data) => {
+  const response = await axios.put(
+    `http://localhost:5000/api/users/${userId}/update`,
+    data,
+    { headers: { "Content-Type": "multipart/form-data" } }
+  );
+  return response.data;
+};
+
+
+export const createOrder = async (userId, orderData) => {
+  console.log(orderData)
+  try {
+    const response = await axios.post(
+      `http://localhost:5000/api/users/${userId}/order`,
+      {
+        userId,
+        orderData,
+      }
+    );
     return response.data;
   } catch (error) {
     console.error(error);

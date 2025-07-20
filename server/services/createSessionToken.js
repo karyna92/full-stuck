@@ -4,8 +4,8 @@ const jwt = require("jsonwebtoken");
 const promisifyJWTSign = promisify(jwt.sign);
 const promisifyJWTVerify = promisify(jwt.verify);
 
-const EXPIRES_TIME_ACCESS_TOKEN = "1h";
-const EXPIRES_TIME_REFRESH_TOKEN = "5h";
+const EXPIRES_TIME_ACCESS_TOKEN = 60;
+const EXPIRES_TIME_REFRESH_TOKEN = 120;
 
 
 module.exports.createAccessToken = async ({ userId, email }) =>
