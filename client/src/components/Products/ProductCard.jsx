@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link } from "react-router-dom";
 import "./products.css";
@@ -18,11 +17,12 @@ const ProductCard = ({ product }) => {
             />
           </div>
         )}
-
-        <p>{product.description}</p>
-        <p>
-          <strong>Price:</strong> ${product.price.toFixed(2)}
-        </p>
+        <div>
+          <p>{product.description}</p>
+          <p>
+            <strong>Price:</strong> ${product.price.toFixed(2)}
+          </p>
+        </div>
       </div>
     </Link>
   );

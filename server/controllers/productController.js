@@ -1,9 +1,20 @@
 const { Product } = require("../models");
+const { NotFoundError } = require("../errors");
 
 module.exports.createProduct = async (req, res, next) => {
   try {
-    const product = await Product(req.body);
-    res.status(201).json({ message: "Product created successfully" });
+    const mediaPaths =
+      req.files?.map((file) => `/uploadsProducts/${file.filename}`) || [];
+
+    const newProduct = await Product.create({
+      ...req.body,
+      media: mediaPaths,
+    });
+
+    res.status(201).send({
+      message: "Product created",
+      product: newProduct,
+    });
   } catch (error) {
     next(error);
   }
@@ -31,12 +42,79 @@ module.exports.getAllProducts = async (req, res, next) => {
 module.exports.getProductById = async (req, res, next) => {
   try {
     const id = req.params.id;
-    const product = await Product.findById(id);
+
+    const product = await Product.findById(id).populate({
+      path: "reviews",
+      populate: {
+        path: "user",
+        select: "firstName lastName avatar",
+      },
+    });
+
+    if (product?.reviews?.length) {
+      product.reviews.forEach((review) => {
+        if (review.user) {
+          review.user = {
+            _id: review.user._id,
+            name: `${review.user.firstName} ${review.user.lastName}`,
+            avatar: review.user.avatar,
+          };
+        }
+      });
+    }
+
     if (!product) {
-      res.status(404).json({ message: "Product not found" });
+        throw new NotFoundError("Product not found");
     } else {
       res.status(200).json(product);
     }
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.updateProduct = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const mediaPaths =
+      req.files?.map((file) => `/uploadsProducts/${file.filename}`) || [];
+
+    const updatedProduct = await Product.findByIdAndUpdate(
+      id,
+      {
+        ...req.body,
+        $push: { media: { $each: mediaPaths } }, 
+      },
+      { new: true }
+    );
+
+    if (!updatedProduct) {
+      return res.status(404).send({ message: "Product not found" });
+    }
+
+    res.status(200).send({
+      message: "Product updated",
+      product: updatedProduct,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.deleteProduct = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const deletedProduct = await Product.findByIdAndDelete(id);
+
+    if (!deletedProduct) {
+      throw new NotFoundError("Product not found");
+    }
+
+    res.status(200).send({
+      message: "Product deleted successfully",
+    });
   } catch (error) {
     next(error);
   }

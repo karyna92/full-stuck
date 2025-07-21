@@ -29,3 +29,14 @@ Content-Type: application/json
 {
   "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NjZiMWVmMzA3ZmEyMjY2M2M0MDIwYWUiLCJlbWFpbCI6ImphbmUuZG9lQGdtYWlsLmNvbSIsImlhdCI6MTcxODkwNDkxNSwiZXhwIjoxNzE4OTA0OTc1fQ.gMBwFSkIATD9stKw-HvNYfjs7WghJ0vat_MJHvbaIZw"
 }
+####
+POST http://localhost:5000/api/products/6870e7f94381161ab7e1b34c/reviews HTTP/1.1
+Content-Type: application/json
+
+{
+  "rating": 5,
+  "review": "This product is amazing!",
+  "user": "6873c5e532f3dbf87bdab062"
+}
+
+####

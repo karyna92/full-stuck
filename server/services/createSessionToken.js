@@ -4,20 +4,20 @@ const jwt = require("jsonwebtoken");
 const promisifyJWTSign = promisify(jwt.sign);
 const promisifyJWTVerify = promisify(jwt.verify);
 
-const EXPIRES_TIME_ACCESS_TOKEN = 60;
-const EXPIRES_TIME_REFRESH_TOKEN = 120;
+const EXPIRES_TIME_ACCESS_TOKEN = "1h";
+const EXPIRES_TIME_REFRESH_TOKEN = "10h";
 
 
-module.exports.createAccessToken = async ({ userId, email }) =>
-  await promisifyJWTSign({ userId, email }, process.env.JWT_SECRET_ACCESS, {
+module.exports.createAccessToken = async ({ userId, email , role}) =>
+  await promisifyJWTSign({ userId, email, role }, process.env.JWT_SECRET_ACCESS, {
     expiresIn: EXPIRES_TIME_ACCESS_TOKEN,
   });
 
 module.exports.verifyAccessToken = async (token) =>
   await promisifyJWTVerify(token, process.env.JWT_SECRET_ACCESS);
 
-module.exports.createRefreshToken = async ({ userId, email }) =>
-  await promisifyJWTSign({ userId, email }, process.env.JWT_SECRET_REFRESH, {
+module.exports.createRefreshToken = async ({ userId, email, role }) =>
+  await promisifyJWTSign({ userId, email, role }, process.env.JWT_SECRET_REFRESH, {
     expiresIn: EXPIRES_TIME_REFRESH_TOKEN,
   });
 

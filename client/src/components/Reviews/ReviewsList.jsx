@@ -2,6 +2,7 @@ import React from "react";
 import ReviewCard from "./ReviewCard";
 
 const ReviewList = ({ reviews }) => {
+  console.log("reviews:", reviews);
   if (!reviews || reviews.length === 0) {
     return <p>No reviews yet.</p>;
   }

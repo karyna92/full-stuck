@@ -1,15 +1,19 @@
 const { verifyAccessToken } = require("../services/createSessionToken");
+const UnauthorizedError = require("../errors/UnauthorizedError");
 
-module.exports.checkToken = async (req, res, next) => {
+const checkToken = async (req, res, next) => {
   try {
-    const {
-      headers: { authorization },
-    } = req;
+    const authorization = req.headers.authorization;
 
-     if (!authorization) {
-       return res.status(401).send({ message: "No token provided" });
-     }
-    const [, token] = authorization.split(" ");
+    if (!authorization) {
+      throw new UnauthorizedError("No token provided");
+    }
+
+    const token = authorization.split(" ")[1];
+
+    if (!token) {
+      throw new UnauthorizedError("Invalid authorization header format");
+    }
 
     const payload = await verifyAccessToken(token);
 
@@ -17,6 +21,11 @@ module.exports.checkToken = async (req, res, next) => {
 
     next();
   } catch (error) {
-    next(error);
+    if (error instanceof UnauthorizedError) {
+      return next(error);
+    }
+    return next(new UnauthorizedError("Unauthorized"));
   }
 };
+
+module.exports = checkToken; 

@@ -13,6 +13,11 @@ app.use(express.json());
 app.use("/api/", router);
 
 app.use('/api/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use(
+  "/api/uploadsProducts",
+  express.static(path.join(__dirname, "uploadsProducts"))
+);
+
 app.use(errorHandler);
 
 module.exports = app;
