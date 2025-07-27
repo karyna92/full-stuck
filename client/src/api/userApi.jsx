@@ -145,7 +145,7 @@ export const createOrder = async (userId, orderData) => {
   try {
     const response = await axios.post("http://localhost:5000/api/chat", payload);
     console.log("Message sent:", response.data);
-    return response.data;
+    return response;
   } catch (error) {
     console.error("Failed to send message:", error);
   }
