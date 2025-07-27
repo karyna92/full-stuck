@@ -5,16 +5,23 @@ import UserPage from "./pages/userPage";
 import ShopLayout from "./components/Layout";
 import LoginModal from "./components/Login/LoginModal";
 import ProductPage from "./pages/product";
+import AddProductPage from "./pages/addProduct";
 import { authUser } from "./api/userApi";
 import { getAllProducts } from "./api/productApi";
 import UpdateProfile from "./components/User/UpdateProfile";
 import AdminDashboard from "./pages/admin";
+import AdminOrders from "./components/Admin/adminOrders";
+import AdminRoute from "./components/Login/adminRoute";
+import AdminLayout from "./components/Admin/adminLayout";
+import EditProductPage from "./pages/editProduct";
+import SupportChatModal from "./components/TelegramBot/telegramBot";
 import "./App.css";
 
 function App() {
   const [user, setUser] = useState(null);
   const [products, setProducts] = useState([]);
   const [loginModal, setLoginModal] = useState(false);
+  const [botModal, setBotModal] = useState(false);
   const [loadingUser, setLoadingUser] = useState(false);
   const [loadingProducts, setLoadingProducts] = useState(false);
   const [error, setError] = useState(null);
@@ -22,23 +29,23 @@ function App() {
   const [totalPages, setTotalPages] = useState(0);
   const navigate = useNavigate();
 
-  // Fetch logged-in user
-  useEffect(() => {
-    async function fetchUser() {
-      try {
-        setLoadingUser(true);
-        const UserData = await authUser();
-        setUser(UserData);
-      } catch (error) {
-        navigate("/");
-      } finally {
-        setLoadingUser(false);
-      }
+useEffect(() => {
+  async function fetchUser() {
+    try {
+      setLoadingUser(true);
+      const UserData = await authUser(navigate);
+      setUser(UserData || null); 
+    } catch (error) {
+      console.error("Failed to authenticate user:", error);
+      setUser(null); 
+    } finally {
+      setLoadingUser(false);
     }
-    fetchUser();
-  }, [navigate]);
+  }
+  fetchUser();
+}, []);
 
-  // Fetch products on page load and whenever currentPage changes
+
   useEffect(() => {
     async function fetchProducts() {
       try {
@@ -65,8 +72,9 @@ function App() {
   if (error) return <div>{error}</div>;
 
   return (
-    <ShopLayout user={user} onLoginClick={() => setLoginModal(true)}>
+    <ShopLayout user={user} onLoginClick={() => setLoginModal(true)} onBotClick ={() => setBotModal(true)}>
       <Routes>
+        {/* Public routes */}
         <Route
           path="/"
           element={
@@ -93,17 +101,22 @@ function App() {
             />
           }
         />
+        <Route path="/products/new" element={<AddProductPage />} />
+        <Route
+          path="/products/edit/:id"
+          element={<EditProductPage user={user} products={products} />}
+        />
         <Route path="/user" element={<UserPage user={user} />} />
         <Route path="/:userId/update" element={<UpdateProfile user={user} />} />
 
-        <Route
-          path="/admin"
-          element={
-            <AdminRoute user={user}>
-              <AdminDashboard user={user} />
-            </AdminRoute>
-          }
-        />
+        {/* Admin protected routes */}
+        <Route element={<AdminRoute user={user} />}>
+          <Route element={<AdminLayout user={user} />}>
+            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/orders" element={<AdminOrders />} />
+            {/* Add more admin routes here */}
+          </Route>
+        </Route>
       </Routes>
 
       {loginModal && (
@@ -114,6 +127,12 @@ function App() {
             setUser(userData);
             setLoginModal(false);
           }}
+        />
+      )}
+      {botModal && (
+        <SupportChatModal
+          isOpen={botModal}
+          onClose={() => setBotModal(false)}
         />
       )}
     </ShopLayout>

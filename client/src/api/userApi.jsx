@@ -8,14 +8,15 @@ export const loginUser = async (data) => {
       "http://localhost:5000/api/authentication/sign-in",
       data
     );
-    console.log(response.data);
-    const { tokens, user  } = response.data;
+    const { tokens, user } = response.data;
+
     localStorage.setItem("accessToken", tokens.accessToken);
     localStorage.setItem("refreshToken", tokens.refreshToken);
 
-    return user;
+   return { user }; 
   } catch (error) {
-    console.error(error);
+    console.error("Login API error:", error);
+    throw error; 
   }
 };
 
@@ -39,28 +40,27 @@ export const registerUser = async (data) => {
 export const authUser = async (navigate) => {
   const accessToken = localStorage.getItem("accessToken");
 
-  if (accessToken) {
-    try {
-      const response = await axios.get(
-        "http://localhost:5000/api/authentication",
-        {
-          headers: { Authorization: `Bearer ${accessToken}` },
-        }
-      );
-      return response.data.data;
-    } catch (error) {
-      if (error.response && error.response.status === 403) {
-        await refreshSession(navigate);
-        return authUser(navigate);
-      } else {
-        throw error;
+  if (!accessToken) {
+    return null; 
+  }
+
+  try {
+    const response = await axios.get(
+      "http://localhost:5000/api/authentication",
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
       }
+    );
+    return response.data.data;
+  } catch (error) {
+    if (error.response?.status === 403) {
+      await refreshSession(navigate);
+      return authUser(navigate); 
     }
-  } else {
-    navigate('/');
-    return null;
+    throw error; 
   }
 };
+
 
 
 export async function refreshSession(navigate) {
@@ -140,3 +140,13 @@ export const createOrder = async (userId, orderData) => {
     console.error(error);
   }
 };
+////////
+ export const getBot = async (payload) => { 
+  try {
+    const response = await axios.post("http://localhost:5000/api/chat", payload);
+    console.log("Message sent:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to send message:", error);
+  }
+ }

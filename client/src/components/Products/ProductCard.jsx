@@ -1,13 +1,12 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "./products.css";
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, user, handleDelete }) => {
   return (
-    <Link to={`/products/${product._id}`} className="product-card-link">
-      <div className="product-card">
+    <div className="product-card">
+      <Link to={`/products/${product._id}`} className="product-card-link">
         <h3>{product.name}</h3>
-
         {product.image && (
           <div className="image-container">
             <img
@@ -17,14 +16,25 @@ const ProductCard = ({ product }) => {
             />
           </div>
         )}
-        <div>
+        <div className="product-info">
           <p>{product.description}</p>
           <p>
             <strong>Price:</strong> ${product.price.toFixed(2)}
           </p>
         </div>
-      </div>
-    </Link>
+      </Link>
+
+      {user?.role === "admin" && (
+        <div className="admin-product-controls">
+          <Link to={`/products/edit/${product._id}`}>
+            <button className="edit-btn">✏️ Edit</button>
+          </Link>
+          <button onClick={handleDelete} className="delete-btn">
+            🗑️ Delete
+          </button>
+        </div>
+      )}
+    </div>
   );
 };
 

@@ -2,7 +2,7 @@ import React from "react";
 import ProductsList from "../components/Products/ProductsList";
 
 const Home = ({
-  products,
+  products, user,
   currentPage,
   setCurrentPage,
   totalPages,
@@ -28,7 +28,7 @@ const Home = ({
     <>
       <div>
         <h1>Welcome to Our Shop</h1>
-        <ProductsList products={products} />
+        <ProductsList products={products} user ={user} />
       </div>
       <div>
         <button onClick={prevButtonHandler} disabled={currentPage === 1}>

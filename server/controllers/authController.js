@@ -1,9 +1,15 @@
 const bcrypt = require("bcrypt");
 const { User, RefreshToken } = require("../models");
-const {  verifyRefreshToken } = require("../services/createSessionToken");
+const { verifyRefreshToken } = require("../services/createSessionToken");
 const { generateTokens } = require("../helpers/generateTokens");
-const{ RefreshTokenError, ConflictError,  NotFoundError, UnauthorizedError }= require("../errors");
-
+const {findOrCreateUserByFirebase}= require("../services/findOrCreateUserByFirebase")
+const admin = require("../configs/firebaseAdmin");
+const {
+  RefreshTokenError,
+  ConflictError,
+  NotFoundError,
+  UnauthorizedError,
+} = require("../errors");
 
 module.exports.registrationUser = async (req, res, next) => {
   try {
@@ -19,54 +25,66 @@ module.exports.registrationUser = async (req, res, next) => {
 
     res.status(201).send({ message: "User created", user: newUser, tokens });
   } catch (error) {
-    next(error); 
+    next(error);
+  }
 };
-}
-
 
 module.exports.loginUser = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, firebaseToken } = req.body;
 
-    const user = await User.findOne({ email }).populate("cart.product");
-    if (!user) {
-      throw new NotFoundError('User not found');
+    let user;
+
+    if (firebaseToken) {
+      const decodedToken = await admin.auth().verifyIdToken(firebaseToken);
+      user = await findOrCreateUserByFirebase(decodedToken);
+      
+      const tokens = await generateTokens(user);
+
+      res.status(200).send({
+        message: "Login successful via Firebase",
+        user,
+        tokens,
+      });
+    } else {
+      user = await User.findOne({ email }).populate("cart.product");
+      if (!user) {
+        throw new NotFoundError("User not found");
+      }
+
+      const isPasswordValid = await bcrypt.compare(password, user.password);
+      if (!isPasswordValid) {
+        throw new UnauthorizedError("Incorrect password");
+      }
+
+      const tokens = await generateTokens(user);
+
+      res.status(200).send({
+        message: "Login successful",
+        user,
+        tokens,
+      });
     }
-
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      throw new UnauthorizedError('Incorrect password');
-    }
-
-    const tokens = await generateTokens(user);
-
-    res.status(200).send({
-      message: 'Login successful',
-      user,
-      tokens,
-    });
-
   } catch (error) {
-    next(error);  
+    next(error);
   }
 };
 
 
 module.exports.checkAuth = async (req, res, next) => {
   try {
-    const {
-      tokenPayload: { userId },
-    } = req;
+    const { userId, role } = req.tokenPayload; 
 
     const foundUser = await User.findById(userId).populate("cart.product");
 
     if (!foundUser) {
-      throw new NotFoundError('User not found');
+      throw new NotFoundError("User not found");
     }
-    res.status(200).send({ data: foundUser });
+    console.log(req.tokenPayload);
 
+    res.status(200).send({ data: foundUser });
   } catch (error) {
-    next(error); 
+    next(error);
   }
 };
 
@@ -88,7 +106,6 @@ module.exports.checkAuth = async (req, res, next) => {
           - Якщо РТ невалідний - відправляємо користувача на аутенфікацію
 
     */
-
 
 module.exports.refreshSession = async (req, res, next) => {
   try {
@@ -119,9 +136,9 @@ module.exports.refreshSession = async (req, res, next) => {
     await RefreshToken.deleteOne({ _id: existingToken._id });
 
     const tokens = await generateTokens(user);
-
+    console.log(tokens);
     res.status(200).send({ tokens });
   } catch (error) {
-    next(error); 
+    next(error);
   }
 };

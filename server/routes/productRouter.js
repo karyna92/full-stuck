@@ -1,4 +1,3 @@
-console.log("productRouter file is loaded");
 
 const { Router } = require("express");
 const productController = require("../controllers/productController");
@@ -10,9 +9,6 @@ const uploadProducts = require("../middleware/uploadImgVideo");
 
 const productRouter = Router();
 
-console.log(typeof checkToken); 
-console.log(typeof adminOnly);
-console.log(typeof productController.createProduct);
 
 
 productRouter

@@ -72,6 +72,30 @@ module.exports.addOrder = async (req, res, next) => {
   }
 };
 
+module.exports.getAllOrders = async (req, res, next) => {
+  const { limit, skip, page } = req.pagination;
+  try {
+    const orders = await Order.find()
+      .find()
+      .limit(limit)
+      .skip(skip)
+      .populate("products", "name price")
+      .populate("userId", "email name");
+
+    const total = await Order.countDocuments();
+    console.log("orders"); 
+
+    res.json({
+      data: orders,
+      currentPage: page,
+      totalPages: Math.ceil(total / limit),
+      totalItems: total,
+    });
+  } catch (error) {
+    console.error("Get all orders error:", error.message, error.stack);
+    next(error);
+  }
+};
 
 module.exports.updateOrder = async (req, res, next) => {
   try {

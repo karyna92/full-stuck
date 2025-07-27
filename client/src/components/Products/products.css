@@ -121,3 +121,71 @@
 .product-details p:last-child.out-of-stock {
   color: red;
 }
+.admin-product-controls {
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+}
+
+.edit-btn,
+.delete-btn {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.edit-btn {
+  background-color: #2196f3;
+  color: white;
+}
+
+.delete-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.edit-product-form {
+  max-width: 500px;
+  margin: 0 auto;
+  background: #fdfdfd;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+}
+
+.edit-product-form h2 {
+  margin-bottom: 20px;
+}
+
+.edit-product-form label {
+  display: block;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+.edit-product-form input,
+.edit-product-form textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.edit-product-form .error {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
+.save-btn {
+  margin-top: 20px;
+  background-color: #4caf50;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}

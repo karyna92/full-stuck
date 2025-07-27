@@ -7,4 +7,6 @@
 # Environment variables
 .env
 
+firebase-service-account.json
+config/firebase-service-account.json
 

@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import "./orders.css";
 
-const OrderCard = ({ order }) => {
+const OrderCard = ({ order, user, onStatusChange }) => {
   if (!order) {
     return <div className="order-card">Invalid order data.</div>;
   }
@@ -17,6 +17,16 @@ const OrderCard = ({ order }) => {
     createdAt,
     products,
   } = order;
+
+  const [newStatus, setNewStatus] = useState(deliveryStatus || status || "");
+
+  const handleStatusChange = (e) => {
+    const updatedStatus = e.target.value;
+    setNewStatus(updatedStatus);
+    if (onStatusChange) {
+      onStatusChange(_id, updatedStatus);
+    }
+  };
 
   return (
     <div className="order-card">
@@ -59,6 +69,23 @@ const OrderCard = ({ order }) => {
           <p>No products in this order.</p>
         )}
       </div>
+
+      {user?.role === "admin" && (
+        <div className="status-update">
+          <label htmlFor={`status-${_id}`}>Change Delivery Status:</label>
+          <select
+            id={`status-${_id}`}
+            value={newStatus}
+            onChange={handleStatusChange}
+          >
+            <option value="">Select Status</option>
+            <option value="pending">Pending</option>
+            <option value="in transit">In Transit</option>
+            <option value="delivered">Delivered</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+      )}
     </div>
   );
 };

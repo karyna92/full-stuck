@@ -8,9 +8,9 @@ const userSchema = new Schema({
   lastName: {
     type: String,
   },
-  avatar: { 
+  avatar: {
     type: String,
-  }, 
+  },
   birthday: {
     type: Date,
     validate: {
@@ -32,7 +32,15 @@ const userSchema = new Schema({
   },
   password: {
     type: String,
-    required: true,
+    required: function () {
+      // Password is required only if firebaseUid is not set (non-Firebase users)
+      return !this.firebaseUid;
+    },
+  },
+  firebaseUid: {
+    type: String,
+    unique: true,
+    sparse: true, 
   },
   address: {
     type: String,

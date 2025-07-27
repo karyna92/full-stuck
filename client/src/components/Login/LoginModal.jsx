@@ -1,5 +1,6 @@
 import Modal from "react-modal";
 import { useState } from "react";
+import LoginWithGoogleButton from "./googleButton";
 import SignIn from "./SignIn";
 import SignUp from "./SignUp";
 import styles from "./login.module.css";
@@ -39,6 +40,14 @@ const LoginModal = ({ isOpen, onClose, sendUser }) => {
           <button onClick={onClose} className={styles.closeButton}>
             ×
           </button>
+          <LoginWithGoogleButton
+            onSuccess={(user, token) => {
+              console.log("Logged in as:", user.email);
+              localStorage.setItem("accessToken", token);
+              sendUser(user); 
+              onClose(); 
+            }}
+          />
 
           <button onClick={toggleForm} className={styles.toggleButton}>
             {loginState ? "Switch to Sign In" : "Switch to Sign Up"}

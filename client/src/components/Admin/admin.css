@@ -1,40 +1,80 @@
-.admin-container {
+.admin-layout {
   display: flex;
   min-height: 100vh;
-  background-color: #f3f4f6;
+  width : 100%;
 }
 
 .admin-sidebar {
-  width: 250px;
-  background-color: #ffffff;
+  width: 100%;
+  background-color: #2d2f36;
+  color: white;
   padding: 20px;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-}
-
-.admin-title {
-  font-size: 1.25rem;
-  font-weight: bold;
-  margin-bottom: 30px;
-}
-
-.admin-nav {
   display: flex;
   flex-direction: column;
-  gap: 15px;
 }
 
-.admin-nav a {
+.admin-sidebar h2 {
+  margin-bottom: 20px;
+}
+
+.admin-sidebar nav ul {
+  list-style: none;
+  padding: 0;
+}
+
+.admin-sidebar nav ul li {
+  margin-bottom: 15px;
+}
+
+.admin-sidebar nav ul li a {
+  color: white;
   text-decoration: none;
-  color: #333333;
-  font-weight: 500;
 }
 
-.admin-nav a:hover {
-  color: #2563eb;
+.admin-sidebar nav ul li a:hover {
+  text-decoration: underline;
 }
 
-.admin-main {
-  flex: 1;
-  padding: 40px;
-  background-color: #f9fafb;
+.logout-button {
+  margin-top: auto;
+  padding: 10px;
+  background-color: #ff4c4c;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.admin-content {
+  flex-grow: 1;
+  padding: 30px;
+  background-color: #f5f7fa;
+}
+
+.admin-header {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 15px;
+  margin-bottom: 30px;
+}
+.admin-orders {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.orders-table th,
+.orders-table td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.orders-table th {
+  background-color: #f4f4f4;
+  text-align: left;
 }

@@ -2,7 +2,7 @@ POST http://localhost:5000/api/authentication/sign-up HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "lily.dep@gmail.com",
+  "email": "admin1@gmail.com",
   "password": "qwerty123",
   "firstName": "Lily",
   "lastName": "Dep",
@@ -14,20 +14,20 @@ POST http://localhost:5000/api/authentication/sign-in HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "lily.dep@gmail.com",
+  "email": "admin1@gmail.com",
   "password": "qwerty123"
 }
 
 ####
 GET http://localhost:5000/api/authentication HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODc5MGM4ZmFhZTM3MjMxNDM4NjcwMGIiLCJlbWFpbCI6ImxpbHkuZGVwQGdtYWlsLmNvbSIsImlhdCI6MTc1Mjc2MzkzMCwiZXhwIjoxNzUyNzYzOTkwfQ.NNkJZIEODDgWK8f2qaCIz5w4ytvsKILWrS17URCS51I
+Authorization: Bearer "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODdlNDMyYzA2MjJmMGRiYmMzY2M4YzIiLCJlbWFpbCI6ImFkbWluMUBnbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NTMxMDU0OTgsImV4cCI6MTc1MzEwNTQ5OH0.7776DeG8xbkzX2tYBEk-9XxYn-Yyl69oTMZsAP96fq4"
 
 ###
 POST http://localhost:5000/api/authentication/refresh HTTP/1.1
 Content-Type: application/json
 
 {
-  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2NjZiMWVmMzA3ZmEyMjY2M2M0MDIwYWUiLCJlbWFpbCI6ImphbmUuZG9lQGdtYWlsLmNvbSIsImlhdCI6MTcxODkwNDkxNSwiZXhwIjoxNzE4OTA0OTc1fQ.gMBwFSkIATD9stKw-HvNYfjs7WghJ0vat_MJHvbaIZw"
+  "refreshToken":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODdlNDMyYzA2MjJmMGRiYmMzY2M4YzIiLCJlbWFpbCI6ImFkbWluMUBnbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJpYXQiOjE3NTMxMDU1MzMsImV4cCI6MTc1MzEwNTUzM30.OyHegHUaUb6dyLIvg25Zf-Fp1AdpSl0niUv6M_IAnM8"
 }
 ####
 POST http://localhost:5000/api/products/6870e7f94381161ab7e1b34c/reviews HTTP/1.1
