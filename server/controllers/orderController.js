@@ -3,7 +3,8 @@ const { NotFoundError, BadRequestError } = require("../errors");
 
 module.exports.addOrder = async (req, res, next) => {
   try {
-    const { userId, orderData } = req.body;
+    const {orderData } = req.body;
+    const userId = req.user.id;
 
     if (!userId || !orderData) {
       throw new BadRequestError("Missing required parameters");
@@ -97,6 +98,27 @@ module.exports.getAllOrders = async (req, res, next) => {
   }
 };
 
+module.exports.getOrdersByUser = async (req, res, next) => {
+  try {
+      const userId = req.tokenPayload.userId;
+ 
+    const orders = await Order.find({ userId })
+      .populate("products.product", "name price") 
+      .sort({ createdAt: -1 }); 
+
+    if (!orders || orders.length === 0) {
+      return res.status(404).json({ message: "No orders found for this user" });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: orders,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 module.exports.updateOrder = async (req, res, next) => {
   try {
     const { orderId } = req.params;
@@ -123,6 +145,24 @@ module.exports.updateOrder = async (req, res, next) => {
     const updatedOrder = await order.save();
 
     res.status(200).send({ message: "Order updated", order: updatedOrder });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.softDeleteOrder = async (req, res, next) => {
+  try {
+    const orderId = req.params.orderId;
+  
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    order.isDeleted = true;
+    await order.save();
+
+    res.status(200).json({ message: "Order soft deleted successfully" });
   } catch (error) {
     next(error);
   }

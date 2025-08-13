@@ -1,39 +1,43 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getProductById, updateProduct } from "../api/productApi";
+import { useSelector, useDispatch } from "react-redux";
 import EditProductForm from "../components/Products/editProduct";
+import { fetchProductById, updateProduct } from "../store/slices/productSlice";
 
-const EditProductPage = ({user} ) => {
+const EditProductPage = ({ user }) => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [product, setProduct] = useState(null);
+  const dispatch = useDispatch();
+
+  const product = useSelector((state) => state.products.currentProduct);
+  const loading = useSelector((state) => state.products.isLoading);
+  const error = useSelector((state) => state.products.error);
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const result = await getProductById(id);
-        setProduct(result);
-      } catch (error) {
-        console.error("Failed to fetch product:", error);
-      }
-    };
+    dispatch(fetchProductById(id));
+  }, [dispatch, id]);
 
-    fetchProduct();
-  }, [id]);
-
-  const handleUpdateProduct = async (productId, updatedProduct) => {
+  const handleUpdateProduct = async (updatedProduct) => {
     try {
-      await updateProduct(productId, updatedProduct);
-          console.log("Updating product:", productId, updatedProduct); 
+      await dispatch(updateProduct({ id, updatedProduct })).unwrap();
+      console.log("Product updated:", id, updatedProduct);
       navigate("/");
-    } catch (error) {
-      console.error("Failed to update product:", error);
+    } catch (err) {
+      console.error("Failed to update product:", err);
     }
   };
 
-  if (!product) return <div>Loading...</div>; 
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+  if (!product) return <div>Product not found</div>;
 
-  return <EditProductForm product={product} user={user} onSubmit={handleUpdateProduct} />;
+  return (
+    <EditProductForm
+      product={product}
+      user={user}
+      onSubmit={handleUpdateProduct}
+    />
+  );
 };
 
 export default EditProductPage;

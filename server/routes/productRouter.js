@@ -35,6 +35,7 @@ productRouter
 // Authenticated users only: Post a review
 productRouter
   .route("/:id/reviews")
+  .get(checkToken, reviewController.getReviewsByProduct)
   .post(checkToken, reviewController.createReview);
 
 module.exports = productRouter;

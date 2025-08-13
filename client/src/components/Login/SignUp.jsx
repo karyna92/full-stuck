@@ -1,9 +1,10 @@
 import { Formik, Form, Field } from "formik";
 import { format } from "date-fns";
-import { registerUser } from "../../api/userApi";
+import { useDispatch, useSelector } from "react-redux";
+import { registerUser } from "../../store/slices/userSlice";
 import styles from "./login.module.css";
 
-const SignUp = (props) => {
+const SignUp = ({ onClose }) => {
   const initialValues = {
     firstName: "",
     lastName: "",
@@ -13,20 +14,23 @@ const SignUp = (props) => {
     address: "",
   };
 
-  const onSubmit = (values, actions) => {
-    props.sendData({
-      submitFn: registerUser,
-      values,
-    });
-    actions.resetForm();
-    props.onClose()
+  const dispatch = useDispatch();
+  const { isLoading, error } = useSelector((state) => state.user);
+
+  const onSubmit = async (values, actions) => {
+    const resultAction = await dispatch(registerUser(values));
+    if (registerUser.fulfilled.match(resultAction)) {
+      onClose();
+    } else {
+      actions.setSubmitting(false);
+    }
   };
 
   return (
     <div className={styles.formSection}>
       <h2 className={styles.formTitle}>Sign Up</h2>
       <Formik initialValues={initialValues} onSubmit={onSubmit}>
-        {() => (
+        {({ isSubmitting }) => (
           <Form className={styles.form}>
             <Field
               name="firstName"
@@ -42,6 +46,7 @@ const SignUp = (props) => {
               name="email"
               placeholder="Type your email"
               className={styles.input}
+              type="email"
             />
             <Field
               name="password"
@@ -55,9 +60,14 @@ const SignUp = (props) => {
               placeholder="Type your address"
               className={styles.input}
             />
-            <button type="submit" className={styles.submitButton}>
-              Register
+            <button
+              type="submit"
+              className={styles.submitButton}
+              disabled={isSubmitting || isLoading}
+            >
+              {isLoading ? "Registering..." : "Register"}
             </button>
+            {error && <div className={styles.error}>{error}</div>}
           </Form>
         )}
       </Formik>

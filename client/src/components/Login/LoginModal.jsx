@@ -7,26 +7,13 @@ import styles from "./login.module.css";
 
 Modal.setAppElement("#root");
 
-const LoginModal = ({ isOpen, onClose, sendUser }) => {
-  const [loginState, setLoginState] = useState(false); 
-  const [error, setError] = useState(null);
- 
+const LoginModal = ({ isOpen, onClose }) => {
+   const [loginState, setLoginState] = useState(false);
 
   const toggleForm = () => {
     setLoginState((prev) => !prev);
-    setError(null);
   };
 
-  const getData = async ({ submitFn, values }) => {
-    try {
-      const result = await submitFn(values);
-      console.log(result);
-      sendUser(result); 
-    onClose()
-    } catch (err) {
-      setError(err);
-    }
-  };
 
   return (
     <Modal
@@ -40,14 +27,13 @@ const LoginModal = ({ isOpen, onClose, sendUser }) => {
           <button onClick={onClose} className={styles.closeButton}>
             ×
           </button>
-          <LoginWithGoogleButton
+          {/* <LoginWithGoogleButton
             onSuccess={(user, token) => {
               console.log("Logged in as:", user.email);
               localStorage.setItem("accessToken", token);
-              sendUser(user); 
-              onClose(); 
+              onClose();
             }}
-          />
+          /> */}
 
           <button onClick={toggleForm} className={styles.toggleButton}>
             {loginState ? "Switch to Sign In" : "Switch to Sign Up"}
@@ -56,14 +42,9 @@ const LoginModal = ({ isOpen, onClose, sendUser }) => {
 
         <main className={styles["form-wrapper"]}>
           {loginState ? (
-            <SignUp sendData={getData} onClose={onClose} />
+            <SignUp  onClose={onClose} />
           ) : (
-            <SignIn sendData={getData} onClose={onClose} />
-          )}
-          {error && (
-            <div className={styles["error-container"]}>
-              {error.message || "Something went wrong"}
-            </div>
+            <SignIn  onClose={onClose} />
           )}
         </main>
       </div>

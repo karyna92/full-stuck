@@ -1,101 +1,136 @@
 import axios from "axios";
 
-export const getAllProducts = async (page = 1) => {
+const API_URL = "http://localhost:5000/api/products";
+
+
+///PRODUCTS
+export const getProducts = async (page = 1) => {
   try {
-    const response = await axios.get("http://localhost:5000/api/products", {
+    const response = await axios.get(API_URL, {
       params: { page },
     });
-    console.log(response.data);
     return response.data;
   } catch (error) {
-    console.error(error);
+    console.error(
+      "Error fetching products:",
+      error.response?.data || error.message
+    );
+    throw error;
   }
 };
 
 export const getProductById = async (id) => {
   try {
-    const response = await axios.get(
-      `http://localhost:5000/api/products/${id}`
-    );
+    const response = await axios.get(`${API_URL}/${id}`);
+    console.log(response.data)
     return response.data;
   } catch (error) {
-    console.error(error);
-  };
-}
-
-
-export const createProduct = async (product) => {
-  const token = localStorage.getItem("accessToken");
-  try {
-    const response = await axios.post(
-      "http://localhost:5000/api/products",
-      product,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
+    console.error(
+      "Error fetching product by id:",
+      error.response?.data || error.message
     );
-    console.log(response.data);
-    return response.data;
-  } catch (error) {
-    console.error("Error creating product:", error.response?.data || error.message);
     throw error;
   }
 };
 
-export const updateProduct = async (id, product) => {
-  const token = localStorage.getItem("accessToken");
+export const createProduct = async (product, token) => {
   try {
-    const response = await axios.put(
-      `http://localhost:5000/api/products/${id}`,
-      product,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await axios.post(API_URL, product, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error) {
-    console.error(error);
+    console.error(
+      "Error creating product:",
+      error.response?.data || error.message
+    );
+    throw error;
   }
 };
 
-export const deleteProduct = async (id) => {
-  const token = localStorage.getItem("accessToken");
+export const updateProduct = async (product, token) => {
   try {
-    const response = await axios.delete(
-      `http://localhost:5000/api/products/${id}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await axios.put(`${API_URL}/${product.id}`, product, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   } catch (error) {
-    console.error(error);
+    console.error(
+      "Error updating product:",
+      error.response?.data || error.message
+    );
+    throw error;
+  }
+};
+
+export const deleteProduct = async (id, token) => {
+  try {
+    const response = await axios.delete(`${API_URL}/${id}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(
+      "Error deleting product:",
+      error.response?.data || error.message
+    );
+    throw error;
   }
 };
 
 //////////////////////////////////////////
+///REVIEWS
 
-export const createReview = async (userId, productId, reviewData) => {
-  console.log("console api:", reviewData);
+export const createReview = async (productId, reviewData, token) => {
   try {
     const response = await axios.post(
-      `http://localhost:5000/api/products/${productId}/reviews`,
+      `${API_URL}/${productId}/reviews`,
+      reviewData, 
       {
-        userId,
-        reviewData,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       }
     );
     return response.data;
   } catch (error) {
     console.error(error);
+    throw error;
   }
 };
+
+export const getReviews = async (productId) => {
+  try {
+    const response = await axios.get(`${API_URL}/${productId}/reviews`);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const deleteReview = async (reviewId, token) => {
+  try {
+    const response = await axios.delete(`${API_URL}/reviews/${reviewId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+ //////////////////////////////////////////
+ //ORDERS
 
 export const getAllOrders = async (page) => {
   try {

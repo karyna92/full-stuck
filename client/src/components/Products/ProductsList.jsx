@@ -1,16 +1,18 @@
 import React, { useState, useMemo } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { deleteProduct } from "../../store/slices/productSlice";
 import ProductCard from "./ProductCard";
 import Sorter from "../Filterer/Sorter";
 import ProductSearch from "../Filterer/Search";
-import {deleteProduct} from "../../api/productApi";
 import "./products.css";
 
 const ProductsList = ({ products, user }) => {
   const [sortBy, setSortBy] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
-    const navigate = useNavigate();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const filteredAndSortedProducts = useMemo(() => {
     let result = [...products];
@@ -36,24 +38,25 @@ const ProductsList = ({ products, user }) => {
 
   const handleAddProduct = () => {
     navigate("/products/new");
-    console.log("Add Product Clicked");
   };
 
-const handleDelete = async (productId) => {
-  if (window.confirm("Are you sure you want to delete this product?")) {
-    try {
-      await deleteProduct(productId);
-      console.log("Deleted product:", productId);
-     navigate("/")
-    } catch (error) {
-      console.error("Failed to delete product", error);
+  const handleDelete = (productId) => {
+    if (window.confirm("Are you sure you want to delete this product?")) {
+      dispatch(deleteProduct(productId))
+        .unwrap()
+        .then(() => {
+          // Optionally show success notification here
+          console.log("Deleted product:", productId);
+          navigate("/");
+        })
+        .catch((error) => {
+          console.error("Failed to delete product", error);
+        });
     }
-  }
-};
+  };
 
-const handleUpdateproduct = (product) => {
-  console.log("Update Product Clicked");
-  navigate(`/products/${product.id}/edit`);
+  const handleUpdateProduct = (product) => {
+    navigate(`/products/edit/${product._id}`);
   };
 
   return (
@@ -74,6 +77,7 @@ const handleUpdateproduct = (product) => {
               product={product}
               user={user}
               handleDelete={() => handleDelete(product._id)}
+              handleUpdate={() => handleUpdateProduct(product)}
             />
           </li>
         ))}

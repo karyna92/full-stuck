@@ -10,5 +10,6 @@ const adminOnly=require("../middleware/adminOnly")
 const orderRouter = Router();
 
 orderRouter.route("/").get(pagination, checkToken, adminOnly, orderController.getAllOrders);
+orderRouter.route("/:orderId").delete(checkToken, adminOnly, orderController.softDeleteOrder);
 
 module.exports = orderRouter;

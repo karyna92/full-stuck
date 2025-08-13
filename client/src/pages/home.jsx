@@ -6,10 +6,6 @@ const Home = ({
   currentPage,
   setCurrentPage,
   totalPages,
-  setTotalPages,
-  setProducts,
-  setError,
-  setLoading,
 }) => {
   // These handlers update current page, and App should react to that change and fetch new data.
   const prevButtonHandler = () => {

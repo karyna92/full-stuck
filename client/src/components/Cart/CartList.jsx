@@ -1,20 +1,20 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import CartItem from "./CartItem";
-import {
-  deleteItemFromCart,
-  addItemToCart,
-  createOrder,
-} from "../../api/userApi";
 import OrderPlacementModal from "../Orders/OrderPlacementModal";
+import {
+ addOrUpdateProduct,
+  removeProduct 
+} from "../../store/slices/cartSlice";
+import { toggleOrderModal } from "../../store/slices/modalSlice";
+import { addOrder } from "../../store/slices/orderSlice";
 
 const CartList = ({ user }) => {
-  const [cart, setCart] = useState(user.cart || []);
-  const [orderModal, setOrderModal] = useState(false);
-  const [selectedItemIds, setSelectedItemIds] = useState([]);
+  const dispatch = useDispatch();
+  const cart = useSelector((state) => state.cart.cartItems);
+  const orderModal = useSelector((state) => state.modal.orderModal); 
 
-  const refreshCart = (updatedCart) => {
-    setCart(updatedCart);
-  };
+  const [selectedItemIds, setSelectedItemIds] = useState([]);
 
   const toggleSelectItem = (itemId) => {
     setSelectedItemIds((prevSelected) =>
@@ -24,29 +24,26 @@ const CartList = ({ user }) => {
     );
   };
 
-  const onUpdateItem = async (productId, newQuantity) => {
-    await addItemToCart(user._id, productId, newQuantity);
-    const updatedCart = cart.map((item) =>
-      item.product._id === productId ? { ...item, quantity: newQuantity } : item
-    );
-    refreshCart(updatedCart);
+  const onUpdateItem = (productId, newQuantity) => {
+    dispatch(addOrUpdateProduct({ productId, quantity: newQuantity }));
   };
 
-  const onRemoveItem = async (productId) => {
-    await deleteItemFromCart(user._id, productId);
-    const updatedCart = cart.filter((item) => item.product._id !== productId);
-    refreshCart(updatedCart);
+  const onRemoveItem = (productId) => {
+    dispatch(removeProduct({ productId }));
     setSelectedItemIds((prev) => prev.filter((id) => id !== productId));
   };
 
-  const onPlaceOrder = async (orderData) => {
+  const onPlaceOrder = (orderData) => {
     const selectedItems = cart.filter((item) =>
       selectedItemIds.includes(item._id)
     );
 
-    const total = selectedItems.reduce((acc, item) => {
-      return acc + item.product.price * item.quantity;
-    }, 0);
+    if (selectedItems.length === 0) return;
+
+    const total = selectedItems.reduce(
+      (acc, item) => acc + item.product.price * item.quantity,
+      0
+    );
 
     const fullOrderData = {
       total,
@@ -57,13 +54,16 @@ const CartList = ({ user }) => {
       ...orderData,
     };
 
-      console.log("Order submitted:", fullOrderData);
-
-    await createOrder(user._id, fullOrderData);
-
-    refreshCart(cart.filter((item) => !selectedItemIds.includes(item._id)));
-    setSelectedItemIds([]);
-    setOrderModal(false);
+    dispatch(addOrder({ orderData: fullOrderData }))
+      .unwrap()
+      .then(() => {
+        // Optionally refresh cart or clear selected items here
+        setSelectedItemIds([]);
+        dispatch(toggleOrderModal(false));
+      })
+      .catch((error) => {
+        console.error("Order placement failed:", error);
+      });
   };
 
   if (cart.length === 0) {
@@ -99,7 +99,7 @@ const CartList = ({ user }) => {
       <p>Selected items total: {selectedItemsTotal.toFixed(2)}</p>
 
       <button
-        onClick={() => setOrderModal(true)}
+        onClick={() => dispatch(toggleOrderModal(true))}
         disabled={selectedItemIds.length === 0}
       >
         Place Order
@@ -108,9 +108,9 @@ const CartList = ({ user }) => {
       <OrderPlacementModal
         user={user}
         isOpen={orderModal}
-        onClose={() => setOrderModal(false)}
+        onClose={() => dispatch(toggleOrderModal(false))}
         onSubmit={onPlaceOrder}
-      />
+      /> 
     </div>
   );
 };

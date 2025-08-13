@@ -2,9 +2,10 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const orderSchema = new Schema({
-  userId: { 
-    type: Schema.Types.ObjectId, ref: "User"
- },
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+  },
   products: [
     {
       product: { type: Schema.Types.ObjectId, ref: "Product" },
@@ -13,29 +14,41 @@ const orderSchema = new Schema({
   ],
 
   total: {
-     type: Number, default: 0 
-    },
-  status: { 
-    type: String, default: "pending" 
-},
+    type: Number,
+    default: 0,
+  },
+  status: {
+    type: String,
+    default: "pending",
+  },
   paymentMethod: {
-     type: String, default: "cash"
-     },
+    type: String,
+    default: "cash",
+  },
   paymentStatus: {
-     type: String, default: "pending"
-     },
+    type: String,
+    default: "pending",
+  },
   deliveryAddress: {
-     type: String, default: "" 
-    },
+    type: String,
+    default: "",
+  },
   deliveryStatus: {
-     type: String, default: "pending"
-     },
-  createdAt: { 
-     type: Date, default: Date.now
-     },
-  updatedAt: { 
-    type: Date, default: Date.now
- },
+    type: String,
+    default: "pending",
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
+  isDeleted: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const Order = mongoose.model("Order", orderSchema);

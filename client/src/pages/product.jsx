@@ -1,62 +1,36 @@
+import React, { useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import ProductDetailsCard from "../components/Products/productDetails";
 import ReviewsList from "../components/Reviews/ReviewsList";
 import SimilarProducts from "../components/Filterer/SimilarProducts";
 import AddToCartModal from "../components/Cart/AddToCartModal";
 import AddReview from "../components/Reviews/AddReview";
-import { getProductById, createReview } from "../api/productApi";
-import { addItemToCart } from "../api/userApi";
+import {
+  fetchProductById,
+  selectSimilarProducts,
+} from "../store/slices/productSlice";
+import { fetchReviews, createReview } from "../store/slices/reviewSlice";
+import { addOrUpdateProduct } from "../store/slices/cartSlice";
+import { toggleCartModal } from "../store/slices/modalSlice";
 
-const ProductPage = ({ products, user, setLoginModal }) => {
+const ProductPage = ({ user, setLoginModal }) => {
   const { id } = useParams();
-  const [product, setProduct] = useState(null);
-  const [similarProductsArray, setSimilarProductsArray] = useState([]);
-  const [addToCartModal, setAddToCartModal] = useState(false);
+  const dispatch = useDispatch();
 
-  // Fetch current product
+  const product = useSelector((state) => state.products.currentProduct);
+  console.log("Product from redux state:", product);
+  const cartModal = useSelector((state) => state.modal);
+  const similarProductsArray = useSelector(selectSimilarProducts);
+
   useEffect(() => {
-    const fetchProduct = async () => {
-      try {
-        const data = await getProductById(id);
-        setProduct(data);
-      } catch (error) {
-        console.error("Failed to fetch product:", error);
-      }
-    };
-    fetchProduct();
-  }, [id]);
-
-  // Generate similar products when products or product updates
-  useEffect(() => {
-    if (!products.length || !product) return;
-
-    const currentName = product.name.toLowerCase();
-    const nameParts = currentName.split(" ").filter((word) => word.length > 2);
-
-    let similar = products.filter((p) => {
-      if (p._id === product._id) return false;
-      const productName = p.name.toLowerCase();
-      return nameParts.some((word) => productName.includes(word));
-    });
-
-    if (similar.length === 0) {
-      similar = products
-        .filter((p) => p._id !== product._id)
-        .sort(() => 0.5 - Math.random())
-        .slice(0, 4);
+    if (id) {
+      dispatch(fetchProductById(id))
+        .unwrap()
+        .then((payload) => console.log("Thunk payload:", payload))
+        .catch((err) => console.error(err));
     }
-
-    setSimilarProductsArray(similar);
-  }, [products, product]);
-
-  const handleAddToCart = () => {
-    if (!user) {
-      setLoginModal(true);
-    } else {
-      setAddToCartModal(true);
-    }
-  };
+  }, [dispatch, id]);
 
   const handleBuyNow = () => {
     if (!user) {
@@ -66,26 +40,35 @@ const ProductPage = ({ products, user, setLoginModal }) => {
     }
   };
 
-  const handleAddToCartSubmit = async (quantity) => {
-    try {
-      await addItemToCart(user._id, product._id, quantity);
-      setAddToCartModal(false);
-      alert("Item successfully added to cart.");
-    } catch (error) {
-      console.error("Failed to add to cart:", error);
-    }
+  const handleAddToCartSubmit = (quantity) => {
+    dispatch(addOrUpdateProduct({ productId: product._id, quantity }))
+      .unwrap()
+      .then(() => {
+        toggleCartModal();
+        alert("Item successfully added to cart.");
+      })
+      .catch((error) => {
+        console.error("Failed to add to cart:", error);
+        alert("Failed to add item to cart.");
+      });
   };
 
-  const submitReview = async (reviewData) => {
-    try {
-      await createReview(user._id, product._id, reviewData);
-      alert("Review submitted successfully!");
-
-      const updatedProduct = await getProductById(id);
-      setProduct(updatedProduct);
-    } catch (error) {
-      console.error("Failed to submit review:", error);
+  const submitReview = (reviewData) => {
+    if (!user) {
+      setLoginModal(true);
+      return;
     }
+
+    dispatch(createReview({ productId: product._id, reviewData }))
+      .unwrap()
+      .then(() => {
+        alert("Review submitted successfully!");
+        dispatch(fetchProductById(id));
+      })
+      .catch((error) => {
+        console.error("Failed to submit review:", error);
+        alert("Failed to submit review.");
+      });
   };
 
   if (!product) return <p>Loading product...</p>;
@@ -104,7 +87,10 @@ const ProductPage = ({ products, user, setLoginModal }) => {
       </div>
 
       <div className="product-actions">
-        <button className="btn add-cart-btn" onClick={handleAddToCart}>
+        <button
+          className="btn add-cart-btn"
+          onClick={() => dispatch(toggleCartModal())}
+        >
           Add to Cart
         </button>
         <button className="btn buy-now-btn" onClick={handleBuyNow}>
@@ -114,10 +100,10 @@ const ProductPage = ({ products, user, setLoginModal }) => {
 
       <SimilarProducts products={similarProductsArray} />
 
-      {addToCartModal && (
+      {cartModal && (
         <AddToCartModal
-          isOpen={addToCartModal}
-          onClose={() => setAddToCartModal(false)}
+          isOpen={cartModal}
+          onClose={() => dispatch(toggleCartModal())}
           product={product}
           onSubmit={handleAddToCartSubmit}
         />

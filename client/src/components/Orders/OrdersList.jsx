@@ -1,22 +1,26 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import OrderCard from "./OrderCard";
+import { fetchOrdersByUser } from "../../store/slices/orderSlice";
 
 const OrderList = ({ user }) => {
-  const [orders, setOrders] = useState(user.orders || []);
+  const dispatch = useDispatch();
+  const { orders, isLoading, error } = useSelector((state) => state.orders);
 
- 
   useEffect(() => {
-    setOrders(user.orders || []);
-  }, [user.orders]);
+    if (user) {
+      dispatch(fetchOrdersByUser());
+    }
+  }, [dispatch, user]);
 
-  if (!orders || orders.length === 0) {
-    return <p>No orders found.</p>;
-  }
-console.log("orders:", orders)
+  if (isLoading) return <p>Loading orders...</p>;
+  if (error) return <p>Error: {error}</p>;
+  if (!orders.length) return <p>No orders found.</p>;
+
   return (
     <div>
       {orders.map((order) => (
-        <OrderCard key={order} order={order} />
+        <OrderCard key={order._id || order.id} order={order} />
       ))}
     </div>
   );

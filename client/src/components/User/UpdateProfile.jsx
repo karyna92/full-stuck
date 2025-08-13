@@ -1,10 +1,17 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { updateUserProfile } from "../../api/userApi";
+import { useDispatch, useSelector } from "react-redux";
+import { updateUser } from "../../store/slices/userSlice";
 import "./userStyles.css";
 
-const UpdateProfile = ({ user }) => {
+const UpdateProfile = () => {
+  const dispatch = useDispatch();
   const { userId } = useParams();
+
+  const { user, isLoading, error, updateMessage } = useSelector(
+    (state) => state.user
+  );
+
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -15,7 +22,6 @@ const UpdateProfile = ({ user }) => {
 
   const [avatarFile, setAvatarFile] = useState(null);
   const [preview, setPreview] = useState(null);
-  const [message, setMessage] = useState("");
 
   useEffect(() => {
     if (user) {
@@ -45,7 +51,7 @@ const UpdateProfile = ({ user }) => {
     }
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     const data = new FormData();
 
@@ -57,13 +63,7 @@ const UpdateProfile = ({ user }) => {
       data.append("avatar", avatarFile);
     }
 
-    try {
-      await updateUserProfile(userId, data);
-      setMessage("Profile updated successfully!");
-    } catch (error) {
-      console.error(error);
-      setMessage("Failed to update profile.");
-    }
+    dispatch(updateUser({ userId, formData: data }));
   };
 
   return (
@@ -116,13 +116,15 @@ const UpdateProfile = ({ user }) => {
           onChange={handleInputChange}
         />
 
-        <button type="submit">Save Changes</button>
+        <button type="submit" disabled={isLoading}>
+          Save Changes
+        </button>
       </form>
 
-      {message && <p>{message}</p>}
+      {updateMessage && <p>{updateMessage}</p>}
+      {error && <p className="error">{error}</p>}
     </div>
   );
 };
 
 export default UpdateProfile;
-

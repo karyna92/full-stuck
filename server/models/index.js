@@ -5,6 +5,7 @@ const Order = require("./Order");
 const Product = require("./Product");
 const Review = require("./Review");
 const RefreshToken = require("./RefreshToken")
+const Cart = require("./Cart")
 
 async function start() {
   await mongoose.connect(DB).catch((err) => {
@@ -19,4 +20,5 @@ module.exports = {
   Product,
   Review,
   RefreshToken,
+  Cart,
 };

@@ -1,21 +1,25 @@
 import { Formik, Form, Field } from "formik";
-import { loginUser } from "../../api/userApi";
+import { useDispatch, useSelector } from "react-redux";
+import { loginUser } from "../../store/slices/userSlice";
 import styles from "./login.module.css";
 
-const SignIn = (props) => {
+const SignIn = ({ onClose }) => {
   const initialValues = {
     email: "",
     password: "",
   };
 
-  const onSubmit = (values, actions) => {
-    props.sendData({
-      submitFn: loginUser,
-      values,
-    });
-    actions.resetForm();
-    props.onClose()
-  };
+  const dispatch = useDispatch();
+  const { isLoading, error } = useSelector((state) => state.user);
+
+const onSubmit = async (values, actions) => {
+  const resultAction = await dispatch(loginUser(values));
+  if (loginUser.fulfilled.match(resultAction)) {
+    onClose();
+  } else {
+    actions.setSubmitting(false);
+  }
+};
 
   return (
     <div className={styles.formSection}>
@@ -35,8 +39,9 @@ const SignIn = (props) => {
               type="password"
             />
             <button type="submit" className={styles.submitButton}>
-              Sign in
+              {isLoading ? "Signing in..." : "Sign in"}
             </button>
+            {error && <div className={styles.error}>{error}</div>}
           </Form>
         )}
       </Formik>

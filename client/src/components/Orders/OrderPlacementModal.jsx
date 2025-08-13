@@ -1,22 +1,30 @@
-import React, { useState } from "react";
-// import "./OrderPlacementModal.css";
+import React, { useState, useEffect } from "react";
 
 const OrderPlacementModal = ({ user, isOpen, onClose, onSubmit }) => {
-  const [deliveryAddress, setDeliveryAddress] = useState(user?.address || "");
+
+  const [deliveryAddress, setDeliveryAddress] = useState("");
   const [note, setNote] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cash");
+ 
+  useEffect(() => {
+    if (isOpen && user?.address) {
+      setDeliveryAddress(user.address);
+    }
+  }, [isOpen, user?.address]);
 
   const handleSubmit = () => {
     if (!deliveryAddress.trim()) {
       alert("Please enter delivery address.");
       return;
     }
-
-    onSubmit({
-      deliveryAddress,
-      note,
-      paymentMethod,
-    });
+    (
+      onSubmit({
+        deliveryAddress,
+        note,
+        paymentMethod,
+        userId: user?.id,
+      })
+    );
 
     onClose();
   };

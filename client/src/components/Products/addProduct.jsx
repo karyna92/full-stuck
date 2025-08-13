@@ -1,9 +1,9 @@
 import React from "react";
-import { useFormik } from "formik";
+import { useFormik } from "formik"
 import { productValidationSchema } from "../../../schemas/products";
 import "./products.css";
 
-const AddProductForm = ({ onSubmit }) => {
+const AddProductForm = ({onSubmit}) => {
   const formik = useFormik({
     initialValues: {
       name: "",
@@ -15,10 +15,7 @@ const AddProductForm = ({ onSubmit }) => {
       discount: 0,
     },
     validationSchema: productValidationSchema,
-    onSubmit: (values, { resetForm }) => {
-      onSubmit(values);
-      resetForm();
-    },
+    onSubmit: onSubmit,
   });
 
   return (

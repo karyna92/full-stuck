@@ -5,7 +5,6 @@ import PersonalInfo from "../components/User/personalInfo";
 import CartList from "../components/Cart/CartList";
 import OrdersList from "../components/Orders/OrdersList";
 
-// import "./styles.css";
 
 const UserPage = ({ user }) => {
   const [activeSection, setActiveSection] = useState("");

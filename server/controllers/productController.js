@@ -42,6 +42,7 @@ module.exports.getAllProducts = async (req, res, next) => {
 module.exports.getProductById = async (req, res, next) => {
   try {
     const id = req.params.id;
+      console.log("Get product by ID called:", req.params.id);
 
     const product = await Product.findById(id).populate({
       path: "reviews",
@@ -66,6 +67,7 @@ module.exports.getProductById = async (req, res, next) => {
     if (!product) {
         throw new NotFoundError("Product not found");
     } else {
+      console.log(product)
       res.status(200).json(product);
     }
   } catch (error) {

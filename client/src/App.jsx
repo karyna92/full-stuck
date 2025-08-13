@@ -1,13 +1,16 @@
-import { useState, useEffect } from "react";
-import { Routes, Route, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Routes, Route } from "react-router-dom";
+import { fetchCurrentUser } from "./store/slices/userSlice";
+import { getProducts, setCurrentPage } from "./store/slices/productSlice";
+import { toggleLoginModal, toggleBotModal } from "./store/slices/modalSlice";
+import { getAccessToken } from "./services/authService";
 import Home from "./pages/home";
 import UserPage from "./pages/userPage";
 import ShopLayout from "./components/Layout";
 import LoginModal from "./components/Login/LoginModal";
 import ProductPage from "./pages/product";
 import AddProductPage from "./pages/addProduct";
-import { authUser } from "./api/userApi";
-import { getAllProducts } from "./api/productApi";
 import UpdateProfile from "./components/User/UpdateProfile";
 import AdminDashboard from "./pages/admin";
 import AdminOrders from "./components/Admin/adminOrders";
@@ -18,61 +21,47 @@ import SupportChatModal from "./components/TelegramBot/telegramBot";
 import "./App.css";
 
 function App() {
-  const [user, setUser] = useState(null);
-  const [products, setProducts] = useState([]);
-  const [loginModal, setLoginModal] = useState(false);
-  const [botModal, setBotModal] = useState(false);
-  const [loadingUser, setLoadingUser] = useState(false);
-  const [loadingProducts, setLoadingProducts] = useState(false);
-  const [error, setError] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(0);
-  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+ const {
+  user,
+   isLoading: loadingUser,
+   error: userError,
+ } = useSelector((state) => state.user);
+
+ const {
+   products,
+   currentPage,
+   totalPages,
+   isLoading: loadingProducts,
+   error: productsError,
+ } = useSelector((state) => state.products);
+
+const {loginModal, botModal } = useSelector((state) => state.modal);
+
 
 useEffect(() => {
-  async function fetchUser() {
-    try {
-      setLoadingUser(true);
-      const UserData = await authUser(navigate);
-      setUser(UserData || null); 
-    } catch (error) {
-      console.error("Failed to authenticate user:", error);
-      setUser(null); 
-    } finally {
-      setLoadingUser(false);
-    }
+  if (getAccessToken()) {
+    dispatch(fetchCurrentUser());
   }
-  fetchUser();
-}, []);
+}, [dispatch]);
 
 
-  useEffect(() => {
-    async function fetchProducts() {
-      try {
-        setLoadingProducts(true);
-        const data = await getAllProducts(currentPage);
-        if (data?.data && data?.currentPage && data?.totalPages) {
-          setProducts(data.data);
-          setCurrentPage(data.currentPage);
-          setTotalPages(data.totalPages);
-          setError(null);
-        } else {
-          throw new Error("Invalid response format");
-        }
-      } catch (err) {
-        setError(err.message || "Error fetching products");
-      } finally {
-        setLoadingProducts(false);
-      }
-    }
-    fetchProducts();
-  }, [currentPage]);
+
+    useEffect(() => {
+      dispatch(getProducts(currentPage));
+    }, [dispatch, currentPage]);
 
   if (loadingUser || loadingProducts) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+  if (userError || productsError)
+    return <div>{userError || productsError}</div>;
 
   return (
-    <ShopLayout user={user} onLoginClick={() => setLoginModal(true)} onBotClick ={() => setBotModal(true)}>
+    <ShopLayout
+      user={user}
+      onLoginClick={() => dispatch(toggleLoginModal())}
+      onBotClick={() => dispatch(toggleBotModal())}
+    >
       <Routes>
         {/* Public routes */}
         <Route
@@ -81,13 +70,9 @@ useEffect(() => {
             <Home
               user={user}
               products={products}
-              setProducts={setProducts}
               currentPage={currentPage}
-              setCurrentPage={setCurrentPage}
               totalPages={totalPages}
-              setTotalPages={setTotalPages}
-              setError={setError}
-              setLoading={setLoadingProducts}
+              setCurrentPage={(page) => dispatch(setCurrentPage(page))}
             />
           }
         />
@@ -96,7 +81,7 @@ useEffect(() => {
           element={
             <ProductPage
               user={user}
-              setLoginModal={setLoginModal}
+              onLogin={() => loginModal()}
               products={products}
             />
           }
@@ -122,17 +107,13 @@ useEffect(() => {
       {loginModal && (
         <LoginModal
           isOpen={loginModal}
-          onClose={() => setLoginModal(false)}
-          sendUser={(userData) => {
-            setUser(userData);
-            setLoginModal(false);
-          }}
+          onClose={() => dispatch(toggleLoginModal())}
         />
       )}
       {botModal && (
         <SupportChatModal
           isOpen={botModal}
-          onClose={() => setBotModal(false)}
+          onClose={() => dispatch(toggleBotModal())}
         />
       )}
     </ShopLayout>
@@ -140,3 +121,53 @@ useEffect(() => {
 }
 
 export default App;
+
+
+  // const [user, setUser] = useState(null);
+  // const [products, setProducts] = useState([]);
+  // const [loginModal, setLoginModal] = useState(false);
+  // const [botModal, setBotModal] = useState(false);
+  // const [loadingUser, setLoadingUser] = useState(false);
+  // const [loadingProducts, setLoadingProducts] = useState(false);
+  // const [error, setError] = useState(null);
+  // const [currentPage, setCurrentPage] = useState(1);
+  // const [totalPages, setTotalPages] = useState(0);
+  // const navigate = useNavigate();
+
+  // useEffect(() => {
+  //   async function fetchUser() {
+  //     try {
+  //       setLoadingUser(true);
+  //       const UserData = await authUser(navigate);
+  //       setUser(UserData || null);
+  //     } catch (error) {
+  //       console.error("Failed to authenticate user:", error);
+  //       setUser(null);
+  //     } finally {
+  //       setLoadingUser(false);
+  //     }
+  //   }
+  //   fetchUser();
+  // }, []);
+
+    // useEffect(() => {
+    //   async function fetchProducts() {
+    //     try {
+    //       setLoadingProducts(true);
+    //       const data = await getAllProducts(currentPage);
+    //       if (data?.data && data?.currentPage && data?.totalPages) {
+    //         setProducts(data.data);
+    //         setCurrentPage(data.currentPage);
+    //         setTotalPages(data.totalPages);
+    //         setError(null);
+    //       } else {
+    //         throw new Error("Invalid response format");
+    //       }
+    //     } catch (err) {
+    //       setError(err.message || "Error fetching products");
+    //     } finally {
+    //       setLoadingProducts(false);
+    //     }
+    //   }
+    //   fetchProducts();
+    // }, [currentPage]);
