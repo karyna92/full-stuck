@@ -53,23 +53,35 @@ module.exports.getProductById = async (req, res, next) => {
     });
 
     if (product?.reviews?.length) {
-      product.reviews.forEach((review) => {
-        if (review.user) {
-          review.user = {
-            _id: review.user._id,
-            name: `${review.user.firstName} ${review.user.lastName}`,
-            avatar: review.user.avatar,
-          };
-        }
+      product.reviews = product.reviews.map((review) => {
+        const user = review.user ? {
+          _id: review.user._id,
+          name: `${review.user.firstName} ${review.user.lastName}`,
+          avatar: review.user.avatar,
+        } : null;
+
+        return {
+          _id: review._id,
+          rating: review.rating,
+          comment: review.comment,
+          user,
+        };
       });
     }
 
-    if (!product) {
-        throw new NotFoundError("Product not found");
-    } else {
-      console.log(product)
-      res.status(200).json(product);
-    }
+    const productData = {
+      _id: product._id,
+      name: product.name,
+      price: product.price,
+      description: product.description,
+      category: product.category,
+      stock: product.stock,
+      discount: product.discount,
+      media: product.media,
+      reviews: product.reviews,
+    };
+
+    res.status(200).json(productData);
   } catch (error) {
     next(error);
   }

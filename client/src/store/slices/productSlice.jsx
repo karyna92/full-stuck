@@ -13,7 +13,7 @@ export const getProducts = createAsyncThunk(
   async (page, thunkAPI) => {
     try {
       const data = await API.getProducts(page);
-      if (data?.data && data?.currentPage && data?.totalPages) {
+      if (data?.data !== undefined && data?.currentPage !== undefined && data?.totalPages !== undefined) {
         console.log(data);
         return data;
       } else {
@@ -43,18 +43,18 @@ export const createProduct = createAsyncThunk(
 );
 
 export const fetchProductById = createAsyncThunk(
-  "products/fetchProductById",
-  async (id, thunkAPI) => {
-    try {
-      const response = await API.getProductById(id);
-      console.log("Fetched product data:", response.data);
-      return response.data;
-    } catch (error) {
-      return thunkAPI.rejectWithValue(
-        error.response?.data?.message || error.message
-      );
+    "products/fetchProductById",
+    async (id, thunkAPI) => {
+      try {
+        const product = await API.getProductById(id); // тут уже готовый объект
+        console.log("Fetched product data:", product);
+        return product;
+      } catch (error) {
+        return thunkAPI.rejectWithValue(
+            error.response?.data?.message || error.message
+        );
+      }
     }
-  }
 );
 
 export const updateProduct = createAsyncThunk(
@@ -138,7 +138,6 @@ const productsSlice = createSlice({
       .addCase(fetchProductById.pending, (state) => {
         state.isLoading = true;
         state.error = null;
-        state.currentProduct = null; // reset previous product
       })
       .addCase(fetchProductById.fulfilled, (state, action) => {
         state.isLoading = false;

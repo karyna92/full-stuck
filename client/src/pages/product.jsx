@@ -10,7 +10,7 @@ import {
   fetchProductById,
   selectSimilarProducts,
 } from "../store/slices/productSlice";
-import { fetchReviews, createReview } from "../store/slices/reviewSlice";
+import { createReview } from "../store/slices/reviewSlice";
 import { addOrUpdateProduct } from "../store/slices/cartSlice";
 import { toggleCartModal } from "../store/slices/modalSlice";
 
@@ -20,17 +20,16 @@ const ProductPage = ({ user, setLoginModal }) => {
 
   const product = useSelector((state) => state.products.currentProduct);
   console.log("Product from redux state:", product);
-  const cartModal = useSelector((state) => state.modal);
+  const cartModal = useSelector((state) => state.modal.cartModal);
   const similarProductsArray = useSelector(selectSimilarProducts);
-
   useEffect(() => {
-    if (id) {
+    if (id && (!product || product._id !== id)) {
       dispatch(fetchProductById(id))
-        .unwrap()
-        .then((payload) => console.log("Thunk payload:", payload))
-        .catch((err) => console.error(err));
+          .unwrap()
+          .then((payload) => console.log("Thunk payload:", payload))
+          .catch((err) => console.error(err));
     }
-  }, [dispatch, id]);
+  }, [dispatch, id, product?._id]);
 
   const handleBuyNow = () => {
     if (!user) {
@@ -44,7 +43,7 @@ const ProductPage = ({ user, setLoginModal }) => {
     dispatch(addOrUpdateProduct({ productId: product._id, quantity }))
       .unwrap()
       .then(() => {
-        toggleCartModal();
+        dispatch(toggleCartModal());
         alert("Item successfully added to cart.");
       })
       .catch((error) => {
