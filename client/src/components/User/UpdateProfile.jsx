@@ -33,7 +33,7 @@ const UpdateProfile = () => {
         address: user.address || "",
       });
       setPreview(
-        user.avatar ? `http://localhost:5000/api/uploads/${user.avatar}` : null
+        user.avatar ? `http://localhost:5001/api/uploads/${user.avatar}` : null
       );
     }
   }, [user]);

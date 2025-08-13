@@ -14,7 +14,7 @@ const ReviewCard = ({ review }) => {
         <h4 className="review-username">{user?.name || "Anonymous"}</h4>
         <div className="img-container">
           <img
-            src={`http://localhost:5000/api/${user.avatar}`}
+            src={`http://localhost:5001/api/${user.avatar}`}
             alt="User Avatar"
           />
         </div>

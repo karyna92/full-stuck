@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api";
+const API_URL = "http://localhost:5001/api";
 
 ///user
 
@@ -69,7 +69,7 @@ export const getOrdersByUser= async (token) => {
 export const getBot = async (payload) => {
   try {
     const response = await axios.post(
-      "http://localhost:5000/api/chat",
+      "http://localhost:5001/api/chat",
       payload
     );
     console.log("Message sent:", response.data);
@@ -83,7 +83,7 @@ export const getBot = async (payload) => {
 export const addItemToCart = async (userId, productId, quantity) => {
   try {
     const response = await axios.post(
-      `http://localhost:5000/api/users/${userId}/cart`,
+      `http://localhost:5001/api/users/${userId}/cart`,
       {
         userId,
         productId,
@@ -99,7 +99,7 @@ export const addItemToCart = async (userId, productId, quantity) => {
 export const deleteItemFromCart = async (userId, productId) => {
   try {
     const response = await axios.delete(
-      `http://localhost:5000/api/users/${userId}/cart`,
+      `http://localhost:5001/api/users/${userId}/cart`,
       {
         data: { userId, productId },
       }

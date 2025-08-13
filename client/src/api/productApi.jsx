@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:5000/api/products";
+const API_URL = "http://localhost:5001/api/products";
 
 
 ///PRODUCTS
@@ -136,7 +136,7 @@ export const getAllOrders = async (page) => {
   try {
     const token = localStorage.getItem("accessToken");
 
-    const response = await axios.get("http://localhost:5000/api/orders", {
+    const response = await axios.get("http://localhost:5001/api/orders", {
       params: { page },
       headers: {
         Authorization: `Bearer ${token}`,
